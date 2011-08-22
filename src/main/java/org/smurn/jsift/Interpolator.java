@@ -35,6 +35,43 @@ public class Interpolator {
      * one pixel in height and width.
      */
     public Image interpolate(Image image) {
-        throw new UnsupportedOperationException("not implemented");
+        if (image == null) {
+            throw new NullPointerException("image must not be null.");
+        }
+        if (image.getWidth() == 0 || image.getHeight() == 0) {
+            throw new IllegalArgumentException("image must consist of at least "
+                    + "one pixel.");
+        }
+
+        int width = image.getWidth() * 2 - 1;
+        int height = image.getHeight() * 2 - 1;
+
+        Image scaled = new Image(height, width);
+
+        for (int row = 0; row < scaled.getHeight(); row++) {
+            for (int col = 0; col < scaled.getWidth(); col++) {
+
+                int sourceRow = row / 2;
+                int sourceCol = col / 2;
+
+                float sum = image.getPixel(sourceRow, sourceCol);
+                int weight = 1;
+
+                if (2 * sourceRow != row) {
+                    sum += image.getPixel(sourceRow + 1, sourceCol);
+                    weight++;
+                }
+                if (2 * sourceCol != col) {
+                    sum += image.getPixel(sourceRow, sourceCol + 1);
+                    weight++;
+                }
+                if (2 * sourceRow != row && 2 * sourceCol != col) {
+                    sum += image.getPixel(sourceRow + 1, sourceCol + 1);
+                    weight++;
+                }
+                scaled.setPixel(row, col, sum / weight);
+            }
+        }
+        return scaled;
     }
 }
