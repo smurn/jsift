@@ -19,7 +19,8 @@ import java.awt.image.BufferedImage;
 
 /**
  * Gray-scale image with 32-bit floating point precision.
- * A pixel value of 0 is interpreted as black, a value of 1 as white.
+ * A pixel value of 0 is interpreted as black, a value of 1 as white. But
+ * the value range is not restricted to those values.
  */
 public final class Image {
 
@@ -30,7 +31,7 @@ public final class Image {
      * @throws IllegalArgumentException if {@code rows} or {@code cols} are
      * negative.
      */
-    public Image(int rows, int columns) {
+    public Image(final int rows, final int columns) {
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -45,7 +46,7 @@ public final class Image {
      * @throws IllegalArgumentException if the sub-arrays do not all have
      * equal length.
      */
-    public Image(float[][] pixels) {
+    public Image(final float[][] pixels) {
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -61,7 +62,34 @@ public final class Image {
      * @throws IllegalArgumentException if the sub-arrays do not all have
      * equal length.
      */
-    public Image(float[][] pixels, boolean firstIndexIsRow) {
+    public Image(final float[][] pixels, final boolean firstIndexIsRow) {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    /**
+     * Creates a copy from the given AWT image.
+     * <p>If the given image is not a grayscale image it will be converted
+     * using {@code 0.3*red + 0.59*green + 0.11*blue}.</p>
+     * @param image Image to copy.
+     * @throws NullPointerException if {@code image} is {@code null}.
+     */
+    public Image(final java.awt.Image image) {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    /**
+     * Gets the number of rows.
+     * @return Number of rows of this image. Never negative.
+     */
+    public int getHeight() {
+        throw new UnsupportedOperationException("not implemented");
+    }
+
+    /**
+     * Gets the number of columns.
+     * @return Number of columns of this image. Never negative.
+     */
+    public int getWidth() {
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -73,10 +101,10 @@ public final class Image {
      * @throws IndexOutOfBoundsException if {@code row} or {@code column}
      * are negative or larger-equals the width and height of the image.
      */
-    public float getPixel(int row, int column){
+    public float getPixel(final int row, final int column) {
         throw new UnsupportedOperationException("not implemented");
     }
-    
+
     /**
      * Sets the value of a pixel.
      * @param row Row of the pixel.
@@ -85,18 +113,7 @@ public final class Image {
      * @throws IndexOutOfBoundsException if {@code row} or {@code column}
      * are negative or larger-equals the width and height of the image.
      */
-    public void setPixel(int row, int column, float value){
-        throw new UnsupportedOperationException("not implemented");
-    }
-    
-    /**
-     * Creates a copy from the given AWT image.
-     * <p>If the given image is not a grayscale image it will be converted
-     * using {@code 0.3*red + 0.59*green + 0.11*blue}.</p>
-     * @param image Image to copy.
-     * @throws NullPointerException if {@code image} is {@code null}.
-     */
-    public Image(java.awt.Image image) {
+    public void setPixel(final int row, final int column, final float value) {
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -118,16 +135,16 @@ public final class Image {
      * method behaves identically to {@link #toArray()}.
      * @return Two dimensional array with one element per pixel.
      */
-    public float[][] toArray(boolean firstIndexIsRow) {
+    public float[][] toArray(final boolean firstIndexIsRow) {
         throw new UnsupportedOperationException("not implemented");
     }
-    
+
     /**
      * Copies this image into a {@link BufferedImage}.
      * @return BufferedImage with image type
      * {@link BufferedImage#TYPE_USHORT_GRAY}.
      */
-    public BufferedImage toBufferedImage(){
+    public BufferedImage toBufferedImage() {
         throw new UnsupportedOperationException("not implemented");
     }
 }
