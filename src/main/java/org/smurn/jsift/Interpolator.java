@@ -18,15 +18,15 @@ package org.smurn.jsift;
 /**
  * Increases the size of an image by a factor of two.
  */
-public class Interpolator {
+public final class Interpolator {
 
     /**
      * Increases the image size by a factor of two.
      * <p>The scaling is such that the even pixels of the resulting image
-     * are identical to the corresponding pixels in the source image. 
+     * are identical to the corresponding pixels in the source image.
      * The odd pixels are linearly interpolated from its two or four
      * neighboors in the source image.</p>
-     * <p>The width of the resulting image is {@code 2*width-1}. The 
+     * <p>The width of the resulting image is {@code 2*width-1}. The
      * same formula applies for the height.</p>
      * @param image Image to interpolate.
      * @return Interpolated image with double the size.
@@ -34,7 +34,7 @@ public class Interpolator {
      * @throws IllegalArgumentException if the image is not at least
      * one pixel in height and width.
      */
-    public Image interpolate(Image image) {
+    public Image interpolate(final Image image) {
         if (image == null) {
             throw new NullPointerException("image must not be null.");
         }
