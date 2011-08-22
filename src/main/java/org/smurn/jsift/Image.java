@@ -15,7 +15,10 @@
  */
 package org.smurn.jsift;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 
 /**
  * Gray-scale image with 32-bit floating point precision.
@@ -24,15 +27,30 @@ import java.awt.image.BufferedImage;
  */
 public final class Image {
 
+    private final float[][] pixels;
+    private final int height;
+    private final int width;
+    private static final float UFLOAT_MAX = 65535.0f;
+
     /**
      * Creates an image of the given size wher all pixels have the value 0.0.
-     * @param rows Number of rows of the image.
-     * @param columns Number of rows of the image.
+     * @param height Number of rows of the image.
+     * @param width Number of rows of the image.
      * @throws IllegalArgumentException if {@code rows} or {@code cols} are
      * negative.
      */
-    public Image(final int rows, final int columns) {
-        throw new UnsupportedOperationException("not implemented");
+    public Image(final int height, final int width) {
+        if (height < 0) {
+            throw new IllegalArgumentException("Cannot create image"
+                    + " with " + height + " rows.");
+        }
+        if (width < 0) {
+            throw new IllegalArgumentException("Cannot create image"
+                    + " with " + height + " columns.");
+        }
+        this.pixels = new float[height][width];
+        this.height = height;
+        this.width = width;
     }
 
     /**
@@ -47,7 +65,7 @@ public final class Image {
      * equal length.
      */
     public Image(final float[][] pixels) {
-        throw new UnsupportedOperationException("not implemented");
+        this(pixels, true);
     }
 
     /**
@@ -63,18 +81,91 @@ public final class Image {
      * equal length.
      */
     public Image(final float[][] pixels, final boolean firstIndexIsRow) {
-        throw new UnsupportedOperationException("not implemented");
+        if (pixels == null) {
+            throw new NullPointerException("pixels cannot be null.");
+        }
+        if (firstIndexIsRow) {
+            this.height = pixels.length;
+            if (this.height != 0) {
+                this.width = pixels[0].length;
+            } else {
+                this.width = 0;
+            }
+
+            this.pixels = new float[this.height][this.width];
+            for (int row = 0; row < this.height; row++) {
+                if (pixels[row].length != this.width) {
+                    throw new IllegalArgumentException("Row " + row + " has "
+                            + pixels[row].length + " columns but row 0 has "
+                            + this.width + " columns.");
+                }
+                System.arraycopy(pixels[row], 0, this.pixels[row],
+                        0, this.width);
+            }
+        } else {
+            this.width = pixels.length;
+            if (this.width != 0) {
+                this.height = pixels[0].length;
+            } else {
+                this.height = 0;
+            }
+
+            this.pixels = new float[this.height][this.width];
+            for (int col = 0; col < this.width; col++) {
+                if (pixels[col].length != this.height) {
+                    throw new IllegalArgumentException("Column " + col + " has "
+                            + pixels[col].length + " rows but column 0 has "
+                            + this.width + " rows.");
+                }
+                for (int row = 0; row < this.height; row++) {
+                    this.pixels[row][col] = pixels[col][row];
+                }
+            }
+        }
     }
 
     /**
      * Creates a copy from the given AWT image.
-     * <p>If the given image is not a grayscale image it will be converted
-     * using {@code 0.3*red + 0.59*green + 0.11*blue}.</p>
+     * <p>If the given image is not a grayscale image it will be converted.</p>
      * @param image Image to copy.
      * @throws NullPointerException if {@code image} is {@code null}.
      */
     public Image(final java.awt.Image image) {
-        throw new UnsupportedOperationException("not implemented");
+        BlockingImageObserver observer = new BlockingImageObserver();
+
+        int imageHeight = image.getHeight(observer);
+        if (imageHeight < 0) {
+            observer.waitForImageToComplete();
+            imageHeight = image.getHeight(observer);
+        }
+
+        int imageWidth = image.getWidth(observer);
+        if (imageWidth < 0) {
+            observer.waitForImageToComplete();
+            imageWidth = image.getWidth(observer);
+        }
+
+        BufferedImage grayImage = new BufferedImage(imageWidth, imageHeight,
+                BufferedImage.TYPE_USHORT_GRAY);
+        Graphics2D g = grayImage.createGraphics();
+
+        if (!g.drawImage(image, 0, 0, observer)) {
+            observer.waitForImageToComplete();
+            g.drawImage(image, 0, 0, null);
+        }
+        g.dispose();
+
+        this.height = grayImage.getHeight();
+        this.width = grayImage.getWidth();
+        this.pixels = new float[height][width];
+
+        Raster raster = grayImage.getRaster();
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                float sample = raster.getSampleFloat(col, row, 0) / UFLOAT_MAX;
+                this.pixels[row][col] = sample;
+            }
+        }
     }
 
     /**
@@ -82,7 +173,7 @@ public final class Image {
      * @return Number of rows of this image. Never negative.
      */
     public int getHeight() {
-        throw new UnsupportedOperationException("not implemented");
+        return height;
     }
 
     /**
@@ -90,7 +181,7 @@ public final class Image {
      * @return Number of columns of this image. Never negative.
      */
     public int getWidth() {
-        throw new UnsupportedOperationException("not implemented");
+        return width;
     }
 
     /**
@@ -102,7 +193,7 @@ public final class Image {
      * are negative or larger-equals the width and height of the image.
      */
     public float getPixel(final int row, final int column) {
-        throw new UnsupportedOperationException("not implemented");
+        return pixels[row][column];
     }
 
     /**
@@ -114,7 +205,7 @@ public final class Image {
      * are negative or larger-equals the width and height of the image.
      */
     public void setPixel(final int row, final int column, final float value) {
-        throw new UnsupportedOperationException("not implemented");
+        pixels[row][column] = value;
     }
 
     /**
@@ -124,7 +215,7 @@ public final class Image {
      * order.
      */
     public float[][] toArray() {
-        throw new UnsupportedOperationException("not implemented");
+        return toArray(true);
     }
 
     /**
@@ -136,7 +227,21 @@ public final class Image {
      * @return Two dimensional array with one element per pixel.
      */
     public float[][] toArray(final boolean firstIndexIsRow) {
-        throw new UnsupportedOperationException("not implemented");
+        float[][] copy;
+        if (firstIndexIsRow) {
+            copy = new float[height][width];
+            for (int row = 0; row < height; row++) {
+                System.arraycopy(pixels[row], 0, copy[row], 0, width);
+            }
+        } else {
+            copy = new float[width][height];
+            for (int row = 0; row < height; row++) {
+                for (int col = 0; col < width; col++) {
+                    copy[col][row] = pixels[row][col];
+                }
+            }
+        }
+        return copy;
     }
 
     /**
@@ -145,6 +250,16 @@ public final class Image {
      * {@link BufferedImage#TYPE_USHORT_GRAY}.
      */
     public BufferedImage toBufferedImage() {
-        throw new UnsupportedOperationException("not implemented");
+        BufferedImage bufferedImage = new BufferedImage(width, height,
+                BufferedImage.TYPE_USHORT_GRAY);
+
+        WritableRaster raster = bufferedImage.getRaster();
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                raster.setSample(col, row, 0, pixels[row][col] * UFLOAT_MAX);
+            }
+        }
+
+        return bufferedImage;
     }
 }
