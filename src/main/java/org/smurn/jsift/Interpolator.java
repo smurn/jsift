@@ -19,7 +19,7 @@ package org.smurn.jsift;
  * Increases the size of an image by a factor of two.
  */
 public class Interpolator {
-    
+
     /**
      * Increases the image size by a factor of two.
      * <p>The scaling is such that the even pixels of the resulting image
@@ -30,11 +30,11 @@ public class Interpolator {
      * same formula applies for the height.</p>
      * @param image Image to interpolate.
      * @return Interpolated image with double the size.
+     * @throws NullPointerException if {@code image} is {@code null}.
      * @throws IllegalArgumentException if the image is not at least
      * one pixel in height and width.
      */
-    public Image interpolate(Image image){
+    public Image interpolate(Image image) {
         throw new UnsupportedOperationException("not implemented");
     }
-    
 }
