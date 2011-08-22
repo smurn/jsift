@@ -78,12 +78,26 @@ public class ImageTest {
     }
 
     @Test
+    public void ctrFloatTrueZeroSize() {
+        Image target = new Image(new float[0][], true);
+        assertEquals(0, target.getWidth());
+        assertEquals(0, target.getHeight());
+    }
+
+    @Test
+    public void ctrFloatFalseZeroSize() {
+        Image target = new Image(new float[0][], false);
+        assertEquals(0, target.getWidth());
+        assertEquals(0, target.getHeight());
+    }
+
+    @Test
     public void ctrImageTYPE_BYTE_GRAY() {
         BufferedImage bImage = new BufferedImage(3, 1, BufferedImage.TYPE_BYTE_GRAY);
         WritableRaster raster = bImage.getRaster();
         raster.setDataElements(0, 0, new byte[]{0});
         raster.setDataElements(1, 0, new byte[]{2});
-        raster.setDataElements(2, 0, new byte[]{(byte)255});
+        raster.setDataElements(2, 0, new byte[]{(byte) 255});
 
         Image target = new Image(bImage);
         float[][] expected = new float[][]{{0.0f, 2.0f / 255, 1.0f}};
@@ -186,11 +200,11 @@ public class ImageTest {
         assertEquals(BufferedImage.TYPE_USHORT_GRAY, actual.getType());
         assertEquals(2, actual.getWidth());
         assertEquals(3, actual.getHeight());
-        assertArrayEquals(new short[]{(short) ( 0.1f * 65535 )}, (short[]) actual.getRaster().getDataElements(0, 0, null));
-        assertArrayEquals(new short[]{(short) ( 0.2f * 65535 )}, (short[]) actual.getRaster().getDataElements(0, 1, null));
-        assertArrayEquals(new short[]{(short) ( 0.3f * 65535 )}, (short[]) actual.getRaster().getDataElements(0, 2, null));
-        assertArrayEquals(new short[]{(short) ( 0.4f * 65535 )}, (short[]) actual.getRaster().getDataElements(1, 0, null));
-        assertArrayEquals(new short[]{(short) ( 0.5f * 65535 )}, (short[]) actual.getRaster().getDataElements(1, 1, null));
-        assertArrayEquals(new short[]{(short) ( 0.6f * 65535 )}, (short[]) actual.getRaster().getDataElements(1, 2, null));
+        assertArrayEquals(new short[]{(short) (0.1f * 65535)}, (short[]) actual.getRaster().getDataElements(0, 0, null));
+        assertArrayEquals(new short[]{(short) (0.2f * 65535)}, (short[]) actual.getRaster().getDataElements(0, 1, null));
+        assertArrayEquals(new short[]{(short) (0.3f * 65535)}, (short[]) actual.getRaster().getDataElements(0, 2, null));
+        assertArrayEquals(new short[]{(short) (0.4f * 65535)}, (short[]) actual.getRaster().getDataElements(1, 0, null));
+        assertArrayEquals(new short[]{(short) (0.5f * 65535)}, (short[]) actual.getRaster().getDataElements(1, 1, null));
+        assertArrayEquals(new short[]{(short) (0.6f * 65535)}, (short[]) actual.getRaster().getDataElements(1, 2, null));
     }
 }
