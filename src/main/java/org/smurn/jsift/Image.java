@@ -262,9 +262,9 @@ public final class Image {
 
         return bufferedImage;
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return "Image(" + height + "," + width + ")";
     }
 }
