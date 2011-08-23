@@ -33,7 +33,7 @@ package org.smurn.jsift;
  * need to have the same width and height. {@link #getScaleLevel(int)}
  * provides such a set of three DoG images.</p>
  */
-public class ScaleSpace {
+public final class ScaleSpace {
 
     /** Number of scales per octave as proposed by Lowe. */
     private static final int LOWE_SCALES_PER_OCTAVE = 3;

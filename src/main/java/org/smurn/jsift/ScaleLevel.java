@@ -28,7 +28,44 @@ package org.smurn.jsift;
  * {@link #getDoG3()} is the difference of {@link #getGaussian2()} and
  * {@link #getGaussian4()}.
  */
-public class ScaleLevel {
+public final class ScaleLevel {
+
+    private final Image gaussian0;
+    private final Image dog1;
+    private final Image gaussian2;
+    private final Image dog3;
+    private final Image gaussian4;
+    private final Image dog5;
+    private final Image gaussian6;
+
+    /**
+     * Creates an instance.
+     * @param gaussian0 Scale-space image with scale offset 0.
+     * @param dog1  Difference-of-gaussian image with scale offset 1.
+     * @param gaussian2 Scale-space image with scale offset 2.
+     * @param dog3 Difference-of-gaussian image with scale offset 3.
+     * @param gaussian4 Scale-space image with scale offset 4.
+     * @param dog5 Difference-of-gaussian image with scale offset 5.
+     * @param gaussian6  Scale-space image with scale offset 6.
+     * @throws NullPointerException if one of the images is {@code null}.
+     * @throws IllegalArgumentException if not all images are of the same
+     * size.
+     */
+    ScaleLevel(Image gaussian0,
+            Image dog1,
+            Image gaussian2,
+            Image dog3,
+            Image gaussian4,
+            Image dog5,
+            Image gaussian6) {
+        this.gaussian0 = gaussian0;
+        this.dog1 = dog1;
+        this.gaussian2 = gaussian2;
+        this.dog3 = dog3;
+        this.gaussian4 = gaussian4;
+        this.dog5 = dog5;
+        this.gaussian6 = gaussian6;
+    }
 
     /**
      * gets the base scale-exponent.
@@ -41,7 +78,7 @@ public class ScaleLevel {
 
     /**
      * Gets the scale-space image with a scale of
-     * {code getBaseScaleExponent()}.
+     * {@code getBaseScaleExponent()}.
      * @return Image blurred with sigma according to the scale-exponent.
      */
     public Image getGaussian0() {
