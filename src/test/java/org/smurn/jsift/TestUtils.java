@@ -59,15 +59,17 @@ public final class TestUtils {
             if (image.getHeight() != other.getHeight()) {
                 return false;
             }
+            double maxError = 0;
             for (int row = 0; row < image.getHeight(); row++) {
                 for (int col = 0; col < image.getWidth(); col++) {
                     float mePixel = image.getPixel(row, col);
                     float otherPixel = other.getPixel(row, col);
                     float error = Math.abs(mePixel - otherPixel);
-                    if (error > epsilon) {
-                        return false;
-                    }
+                    maxError = Math.max(maxError, error);
                 }
+            }
+            if (maxError > epsilon) {
+                return false;
             }
             return true;
         }
@@ -77,9 +79,8 @@ public final class TestUtils {
             description.appendText("similar to ").appendValue(image);
         }
     }
-    
-    
-    public static Matcher<Image> equalTo(Image image, float epsilon){
+
+    public static Matcher<Image> equalTo(Image image, float epsilon) {
         return new ImageMatcher(image, epsilon);
     }
 }
