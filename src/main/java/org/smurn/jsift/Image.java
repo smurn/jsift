@@ -33,7 +33,7 @@ public final class Image {
     private static final float UFLOAT_MAX = 65535.0f;
 
     /**
-     * Creates an image of the given size wher all pixels have the value 0.0.
+     * Creates an image of the given size where all pixels have the value zero.
      * @param height Number of rows of the image.
      * @param width Number of rows of the image.
      * @throws IllegalArgumentException if {@code rows} or {@code cols} are
