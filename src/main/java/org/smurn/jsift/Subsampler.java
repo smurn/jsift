@@ -35,7 +35,7 @@ public class Subsampler {
      * @return Subsampled image.
      * @throws NullPointerException if {@code image} is {@code null}.
      */
-    public Image subsample(Image image) {
+    public Image subsample(final Image image) {
         throw new UnsupportedOperationException("not implemented");
     }
 }
