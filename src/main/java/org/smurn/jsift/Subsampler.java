@@ -36,6 +36,20 @@ public class Subsampler {
      * @throws NullPointerException if {@code image} is {@code null}.
      */
     public Image subsample(final Image image) {
-        throw new UnsupportedOperationException("not implemented");
+        if (image == null) {
+            throw new NullPointerException("image must not be null");
+        }
+        int width = (image.getWidth() + 1) / 2;
+        int height = (image.getHeight() + 1) / 2;
+
+        Image result = new Image(height, width);
+
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                result.setPixel(row, col, image.getPixel(2 * row, 2 * col));
+            }
+        }
+        
+        return result;
     }
 }
