@@ -18,7 +18,7 @@ package org.smurn.jsift;
 /**
  * Increases the size of an image by a factor of two.
  */
-public final class Interpolator {
+public final class LinearUpScalerImpl implements UpScaler {
 
     /**
      * Increases the image size by a factor of two.
@@ -26,25 +26,25 @@ public final class Interpolator {
      * are identical to the corresponding pixels in the source image.
      * The odd pixels are linearly interpolated from its two or four
      * neighboors in the source image.</p>
-     * <p>The width of the resulting image is {@code 2*width-1}. The
-     * same formula applies for the height.</p>
-     * @param image Image to interpolate.
+     * <p>The width of the resulting image is {@code 2*width-1} or 0 if the 
+     * width is 0. The same formula applies for the height.</p>
+     * @param image Image to upScale.
      * @return Interpolated image with double the size.
      * @throws NullPointerException if {@code image} is {@code null}.
-     * @throws IllegalArgumentException if the image is not at least
-     * one pixel in height and width.
      */
-    public Image interpolate(final Image image) {
+    @Override
+    public Image upScale(final Image image) {
         if (image == null) {
             throw new NullPointerException("image must not be null.");
-        }
-        if (image.getWidth() == 0 || image.getHeight() == 0) {
-            throw new IllegalArgumentException("image must consist of at least "
-                    + "one pixel.");
         }
 
         int width = image.getWidth() * 2 - 1;
         int height = image.getHeight() * 2 - 1;
+        width = Math.max(width, 0);
+        height = Math.max(height, 0);
+        if (width == 0 || height == 0) {
+            return new Image(height, width);
+        }
 
         Image scaled = new Image(height, width);
 

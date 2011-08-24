@@ -18,12 +18,12 @@ package org.smurn.jsift;
 /**
  * Reduces the size of an image by half.
  */
-public class Subsampler {
+public class SubsamplerImpl implements DownScaler {
 
     /**
      * Creates an instance.
      */
-    public Subsampler() {
+    public SubsamplerImpl() {
         // empty
     }
 
@@ -35,7 +35,7 @@ public class Subsampler {
      * @return Subsampled image.
      * @throws NullPointerException if {@code image} is {@code null}.
      */
-    public Image subsample(final Image image) {
+    public Image downScale(final Image image) {
         if (image == null) {
             throw new NullPointerException("image must not be null");
         }
@@ -49,7 +49,7 @@ public class Subsampler {
                 result.setPixel(row, col, image.getPixel(2 * row, 2 * col));
             }
         }
-        
+
         return result;
     }
 }

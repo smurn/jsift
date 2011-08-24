@@ -22,24 +22,26 @@ import static org.smurn.jsift.TestUtils.*;
 /**
  * Unit tests for {@link Interpolator}.
  */
-public class InterpolatorTest {
+public class LinearUpScalerImplTest {
 
     @Test(expected = NullPointerException.class)
     public void nullImage() {
-        Interpolator target = new Interpolator();
-        target.interpolate(null);
+        LinearUpScalerImpl target = new LinearUpScalerImpl();
+        target.upScale(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void zeroImage() {
-        Interpolator target = new Interpolator();
-        target.interpolate(new Image(0, 10));
+        LinearUpScalerImpl target = new LinearUpScalerImpl();
+        Image actual = target.upScale(new Image(0, 10));
+        Image expected = new Image(0, 19);
+        assertThat(actual, TestUtils.equalTo(expected, 1E-10f));
     }
 
     @Test
     public void oneByOne() {
-        Interpolator target = new Interpolator();
-        Image actual = target.interpolate(new Image(new float[][]{{0.4f}}));
+        LinearUpScalerImpl target = new LinearUpScalerImpl();
+        Image actual = target.upScale(new Image(new float[][]{{0.4f}}));
         Image expected = new Image(new float[][]{{0.4f}});
         assertThat(actual, TestUtils.equalTo(expected, 1E-10f));
     }
@@ -57,8 +59,8 @@ public class InterpolatorTest {
                     {4.0f, 4.5f, 5.0f, 5.5f, 6.0f}
                 });
 
-        Interpolator target = new Interpolator();
-        Image actual = target.interpolate(input);
+        LinearUpScalerImpl target = new LinearUpScalerImpl();
+        Image actual = target.upScale(input);
 
         assertThat(actual, equalTo(expected, 1E-10f));
     }

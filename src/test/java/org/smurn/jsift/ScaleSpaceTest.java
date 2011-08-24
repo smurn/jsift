@@ -28,6 +28,9 @@ public class ScaleSpaceTest {
 
     private Image image;
     private Image image2;
+    private UpScaler upScaler = new LinearUpScalerImpl();
+    private DownScaler downScaler = new SubsamplerImpl();
+    private LowPassFilter lowFilter = new GaussianFilterImpl();
 
     @Before
     public void setup() {
@@ -37,8 +40,8 @@ public class ScaleSpaceTest {
                 image.setPixel(row, col, (row * col) / (20.0f * 20.0f));
             }
         }
-        Interpolator interpolator = new Interpolator();
-        image2 = interpolator.interpolate(image);
+        LinearUpScalerImpl interpolator = new LinearUpScalerImpl();
+        image2 = interpolator.upScale(image);
     }
 
     @Test(expected = NullPointerException.class)
@@ -66,10 +69,10 @@ public class ScaleSpaceTest {
 
     @Test
     public void initialBlurring() {
-        GaussianFilter filter = new GaussianFilter(Math.sqrt(2.1 * 2.1 - 0.8 * 0.8));
-        Image expected = filter.filter(image2);
+        GaussianFilterImpl filter = new GaussianFilterImpl();
+        Image expected = filter.filter(image2, Math.sqrt(2.1 * 2.1 - 0.8 * 0.8));
 
-        ScaleSpace target = new ScaleSpace(image, 4, 0.4, 2.1);
+        ScaleSpace target = new ScaleSpace(image, 4, 0.4, 2.1, upScaler, downScaler, lowFilter);
         Image actual = target.getScaleLevel(0).getGaussian0();
 
         assertThat(actual, equalTo(expected, 1E-5f));
@@ -78,10 +81,10 @@ public class ScaleSpaceTest {
     @Test
     public void gaussian2() {
         double sigma = 2 * Math.pow(2, 0.25);
-        GaussianFilter filter = new GaussianFilter(Math.sqrt(sigma * sigma - 0.8 * 0.8));
-        Image expected = filter.filter(image2);
+        GaussianFilterImpl filter = new GaussianFilterImpl();
+        Image expected = filter.filter(image2, Math.sqrt(sigma * sigma - 0.8 * 0.8));
 
-        ScaleSpace target = new ScaleSpace(image, 4, 0.4, 2.0);
+        ScaleSpace target = new ScaleSpace(image, 4, 0.4, 2.0, upScaler, downScaler, lowFilter);
         Image actual = target.getScaleLevel(0).getGaussian2();
 
         assertThat(actual, equalTo(expected, 1E-5f));
@@ -90,10 +93,10 @@ public class ScaleSpaceTest {
     @Test
     public void gaussian4() {
         double sigma = 2 * Math.pow(2, 0.5);
-        GaussianFilter filter = new GaussianFilter(Math.sqrt(sigma * sigma - 0.8 * 0.8));
-        Image expected = filter.filter(image2);
+        GaussianFilterImpl filter = new GaussianFilterImpl();
+        Image expected = filter.filter(image2, Math.sqrt(sigma * sigma - 0.8 * 0.8));
 
-        ScaleSpace target = new ScaleSpace(image, 4, 0.4, 2.0);
+        ScaleSpace target = new ScaleSpace(image, 4, 0.4, 2.0, upScaler, downScaler, lowFilter);
         Image actual = target.getScaleLevel(0).getGaussian4();
 
         assertThat(actual, equalTo(expected, 1E-5f));

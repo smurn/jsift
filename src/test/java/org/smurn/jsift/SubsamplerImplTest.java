@@ -20,29 +20,29 @@ import static org.junit.Assert.*;
 import static org.smurn.jsift.TestUtils.*;
 
 /**
- * Unit tests for {@link Subsampler}.
+ * Unit tests for {@link SubsamplerImpl}.
  */
-public class SubsamplerTest {
+public class SubsamplerImplTest {
 
     @Test(expected = NullPointerException.class)
     public void imageNull() {
-        Subsampler target = new Subsampler();
-        target.subsample(null);
+        SubsamplerImpl target = new SubsamplerImpl();
+        target.downScale(null);
     }
 
     @Test
     public void image0x0() {
         Image image = new Image(0, 0);
-        Subsampler target = new Subsampler();
-        Image actual = target.subsample(image);
+        SubsamplerImpl target = new SubsamplerImpl();
+        Image actual = target.downScale(image);
         assertThat(actual, equalTo(image, 1E-5f));
     }
 
     @Test
     public void image1x1() {
         Image image = new Image(new float[][]{{0.3f}});
-        Subsampler target = new Subsampler();
-        Image actual = target.subsample(image);
+        SubsamplerImpl target = new SubsamplerImpl();
+        Image actual = target.downScale(image);
         assertThat(actual, equalTo(image, 1E-5f));
     }
 
@@ -50,8 +50,8 @@ public class SubsamplerTest {
     public void image2x2() {
         Image image = new Image(new float[][]{{0.3f, 0.4f}, {0.5f, 0.6f}});
         Image expected = new Image(new float[][]{{0.3f}});
-        Subsampler target = new Subsampler();
-        Image actual = target.subsample(image);
+        SubsamplerImpl target = new SubsamplerImpl();
+        Image actual = target.downScale(image);
         assertThat(actual, equalTo(expected, 1E-5f));
     }
 
@@ -59,8 +59,8 @@ public class SubsamplerTest {
     public void image3x2() {
         Image image = new Image(new float[][]{{0.3f, 0.4f}, {0.5f, 0.6f}, {0.7f, 0.8f}});
         Image expected = new Image(new float[][]{{0.3f}, {0.7f}});
-        Subsampler target = new Subsampler();
-        Image actual = target.subsample(image);
+        SubsamplerImpl target = new SubsamplerImpl();
+        Image actual = target.downScale(image);
         assertThat(actual, equalTo(expected, 1E-5f));
     }
 
@@ -68,8 +68,8 @@ public class SubsamplerTest {
     public void image3x3() {
         Image image = new Image(new float[][]{{0.3f, 0.4f, -0.1f}, {0.5f, 0.6f, -0.2f}, {0.7f, 0.8f, -0.3f}});
         Image expected = new Image(new float[][]{{0.3f, -0.1f}, {0.7f, -0.3f}});
-        Subsampler target = new Subsampler();
-        Image actual = target.subsample(image);
+        SubsamplerImpl target = new SubsamplerImpl();
+        Image actual = target.downScale(image);
         assertThat(actual, equalTo(expected, 1E-5f));
     }
 }

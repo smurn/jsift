@@ -24,39 +24,38 @@ import org.apache.commons.math.distribution.NormalDistributionImpl;
  * reuse of the pre-calculated kernel.</p>
  * <p>Pixels outside the image are interpreted as transparent.</p>
  */
-public final class GaussianFilter {
+public final class GaussianFilterImpl implements LowPassFilter {
 
     private static final int WINDOW_SIZE_FACTOR = 4;
     private static final double PRECISION = Double.MIN_NORMAL;
-    private final double[] kernel;
-    private final double[] cumulativeKernel;
 
     /**
      * Creates an instance.
-     * @param sigma Standard deviation of the gaussian kernel.
-     * @throws IllegalArgumentException if {@code sigma} is not strictly 
-     * positive.
      */
-    public GaussianFilter(final double sigma) {
-        if (sigma <= 0) {
-            throw new IllegalArgumentException("sigma must not be zero or "
-                    + "negative.");
-        }
-        try {
-            kernel = buildKernel(sigma);
-            cumulativeKernel = cumulativeSum(kernel);
-        } catch (MathException ex) {
-            throw new RuntimeException(ex);
-        }
+    public GaussianFilterImpl() {
+        // empty
     }
 
     /**
      * Creates a filtered copy of the given image.
-     * @param image Image to filter. Ist not modified.
+     * @param image Image to filter.
+     * @param sigma Standard deviation of the gaussian kernel.
      * @return Blurred image.
      * @throws NullPointerException if {@code image} is {@code null}.
+     * @throws IllegalArgumentException if {@code sigma} is not strictly 
+     * positive.
      */
-    public Image filter(final Image image) {
+    @Override
+    public Image filter(final Image image, final double sigma) {
+        if (image == null) {
+            throw new NullPointerException("image must not be null");
+        }
+        if (sigma <= 0) {
+            throw new IllegalArgumentException("sigma must not be zero or "
+                    + "negative.");
+        }
+        double[] kernel = buildKernel(sigma);
+        double[] cumulativeKernel = cumulativeSum(kernel);
         int window = (kernel.length - 1) / 2;
 
         // horizontal pass
@@ -102,13 +101,11 @@ public final class GaussianFilter {
             }
         }
 
-
         for (int row = 0; row < image.getHeight(); row++) {
             for (int col = 0; col < image.getWidth(); col++) {
                 result.setPixel(row, col, (float) vertical[row][col]);
             }
         }
-
 
         return result;
     }
@@ -117,10 +114,8 @@ public final class GaussianFilter {
      * Builds a one dimensional gaussian kernel.
      * @param sigma Standard deviation of the kernel.
      * @return Discretized kernel. Array length is odd, kernel is centered.
-     * @throws MathException if the approximation failed.
      */
-    private static double[] buildKernel(final double sigma) 
-            throws MathException {
+    private static double[] buildKernel(final double sigma) {
 
         int windowSize = (int) Math.ceil(WINDOW_SIZE_FACTOR * sigma);
 
@@ -128,12 +123,15 @@ public final class GaussianFilter {
                 PRECISION);
 
         double[] kernel = new double[2 * windowSize + 1];
-
         double sum = 0;
-        for (int i = 0; i < kernel.length; i++) {
-            double x = i - windowSize;
-            kernel[i] = ndist.cumulativeProbability(x - 0.5, x + 0.5);
-            sum += kernel[i];
+        try {
+            for (int i = 0; i < kernel.length; i++) {
+                double x = i - windowSize;
+                kernel[i] = ndist.cumulativeProbability(x - 0.5, x + 0.5);
+                sum += kernel[i];
+            }
+        } catch (MathException ex) {
+            throw new RuntimeException(ex);
         }
         for (int i = 0; i < kernel.length; i++) {
             kernel[i] /= sum;

@@ -135,7 +135,7 @@ public final class ScaleLevel {
 
     /**
      * Gets the scale-space image with a scale of
-     * {@link #getBaseScaleExponent()+5}.
+     * {@code #getBaseScaleExponent()+5}.
      * @return Image blurred with sigma according to the scale-exponent.
      */
     public Image getGaussian5() {

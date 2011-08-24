@@ -43,8 +43,8 @@ public final class ScaleSpace {
     private static final double LOWE_INITIAL_BLUR = 1.6;
 
     /**
-     * Creates a scale space for an image using the parameters proposed
-     * in Lowe's paper.
+     * Creates a scale space for an image using the parameters and algorithms
+     * proposed in Lowe's paper.
      * @param image Image to build the scale space for.
      * @throws NullPointerException if {@code image} is {@code null}.
      * @throws IllegalArgumentException if the image is smaller than 2x2 pixels.
@@ -53,7 +53,10 @@ public final class ScaleSpace {
         this(image,
                 LOWE_SCALES_PER_OCTAVE,
                 LOWE_ORIGINAL_BLUR,
-                LOWE_INITIAL_BLUR);
+                LOWE_INITIAL_BLUR,
+                new LinearUpScalerImpl(),
+                new SubsamplerImpl(),
+                new GaussianFilterImpl());
     }
 
     /**
@@ -64,14 +67,22 @@ public final class ScaleSpace {
      * @param originalBlur Estimation of the blurriness of the input image.
      * Lowe suggests to use 0.5, the minimum required to avoid aliasing.
      * @param initialBlur Initial blur to apply. Lowe suggests 1.6.
-     * @throws NullPointerException if {@code image} is {@code null}.
+     * @param upScaler Algorithm to increase the image size. Lowe suggests
+     * {@link LinearUpScalerImpl}.
+     * @param downScaler Algorithm to decrease the image size. Lowe suggests
+     * {@link SubsamplerImpl}.
+     * @param filter Algorithm to filter out high-frequency components. Lowe
+     * suggests {@link GaussianFilterImpl}.
+     * @throws NullPointerException if {@code image} or one of the algorithms is
+     * {@code null}.
      * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller
      * than one, {@code originalBlur} is not stricly positive,
      * {@code initialBlur} is smaller than {@code 2*originalBlur} or if the
      * image is smaller than 2x2 pixels.
      */
     public ScaleSpace(final Image image, final int scalesPerOctave,
-            final double originalBlur, final double initialBlur) {
+            final double originalBlur, final double initialBlur,
+            UpScaler upScaler, DownScaler downScaler, LowPassFilter filter) {
         throw new UnsupportedOperationException("not implemented");
     }
 

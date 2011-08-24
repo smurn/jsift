@@ -20,19 +20,20 @@ import static org.junit.Assert.*;
 import static org.smurn.jsift.TestUtils.*;
 
 /**
- * Unit test for {@link GaussianFilter}.
+ * Unit test for {@link GaussianFilterImpl}.
  */
-public class GaussianFilterTest {
+public class GaussianFilterImplTest {
 
     @Test(expected = NullPointerException.class)
     public void nullImage() {
-        GaussianFilter target = new GaussianFilter(1.0);
-        target.filter(null);
+        GaussianFilterImpl target = new GaussianFilterImpl();
+        target.filter(null, 1.0);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void zeroGaussian() {
-        new GaussianFilter(0.0);
+        GaussianFilterImpl target = new GaussianFilterImpl();
+        target.filter(new Image(20, 20), 0.0);
     }
 
     /**
@@ -59,8 +60,8 @@ public class GaussianFilterTest {
             }
         }
 
-        GaussianFilter target = new GaussianFilter(sigma);
-        Image actual = target.filter(input);
+        GaussianFilterImpl target = new GaussianFilterImpl();
+        Image actual = target.filter(input, sigma);
 
         assertThat(actual, equalTo(expected, 1E-5f));
     }
@@ -79,8 +80,8 @@ public class GaussianFilterTest {
             }
         }
 
-        GaussianFilter target = new GaussianFilter(4.5);
-        Image actual = target.filter(input);
+        GaussianFilterImpl target = new GaussianFilterImpl();
+        Image actual = target.filter(input, 4.5);
 
         assertThat(actual, equalTo(input, 1E-10f));
     }
