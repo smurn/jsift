@@ -30,6 +30,11 @@ public class GaussianFilterTest {
         target.filter(null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void zeroGaussian() {
+        new GaussianFilter(0.0);
+    }
+
     /**
      * This test smooths a point source which produces the image
      * of the kernel which we calculate with double accuracy as a reference
