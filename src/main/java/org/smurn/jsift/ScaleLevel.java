@@ -51,13 +51,13 @@ public final class ScaleLevel {
      * @throws IllegalArgumentException if not all images are of the same
      * size.
      */
-    ScaleLevel(Image gaussian0,
-            Image dog1,
-            Image gaussian2,
-            Image dog3,
-            Image gaussian4,
-            Image dog5,
-            Image gaussian6) {
+    ScaleLevel(final Image gaussian0,
+            final Image dog1,
+            final Image gaussian2,
+            final Image dog3,
+            final Image gaussian4,
+            final Image dog5,
+            final Image gaussian6) {
         this.gaussian0 = gaussian0;
         this.dog1 = dog1;
         this.gaussian2 = gaussian2;
