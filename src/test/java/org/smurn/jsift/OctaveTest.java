@@ -51,6 +51,17 @@ public class OctaveTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    public void ctrToFew() {
+        new Octave(0.5, Arrays.asList(
+                new Image(20, 20),
+                new Image(20, 20),
+                new Image(20, 20)),
+                Arrays.asList(
+                new Image(20, 20),
+                new Image(20, 20)));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
     public void ctrWrongSize() {
         new Octave(0.5, Arrays.asList(
                 new Image(20, 20),
