@@ -70,6 +70,4 @@ public class ScaleSpaceTest {
         ScaleSpace target = new ScaleSpace(Arrays.asList(dummy1, dummy2));
         target.getOctaves().clear();
     }
-    
-    
 }

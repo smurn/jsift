@@ -15,6 +15,8 @@
  */
 package org.smurn.jsift;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,14 +39,24 @@ import java.util.List;
  */
 public final class ScaleSpace {
 
+    /** Octaves in this scale-space */
+    private final List<Octave> octaves;
+
     /**
      * Creates an instance.
      * @param octaves Octaves of this scale-space.
      * @throws NullPointerException if {@code octave} is {@code null}.
      * @throws IllegalArgumentException if there is not at least one octave.
      */
-    public ScaleSpace(List<Octave> octaves) {
-        throw new UnsupportedOperationException("not implemented");
+    public ScaleSpace(final List<Octave> octaves) {
+        if (octaves == null) {
+            throw new NullPointerException("octaves must not be null");
+        }
+        if (octaves.size() <= 0) {
+            throw new IllegalArgumentException("need at least one octave");
+        }
+        this.octaves = Collections.unmodifiableList(
+                new ArrayList<Octave>(octaves));
     }
 
     /**
@@ -52,6 +64,6 @@ public final class ScaleSpace {
      * @return Immutable list of octaves.
      */
     public List<Octave> getOctaves() {
-        throw new UnsupportedOperationException("not implemented");
+        return octaves;
     }
 }
