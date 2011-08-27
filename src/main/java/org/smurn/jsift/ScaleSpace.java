@@ -15,6 +15,8 @@
  */
 package org.smurn.jsift;
 
+import java.util.List;
+
 /**
  * Three dimensional extension of an image using scale as the third dimension.
  * <p>The scale is usually given as sigma, the amount of blur in the image. Due
@@ -35,74 +37,30 @@ package org.smurn.jsift;
  */
 public final class ScaleSpace {
 
-    /** Number of scales per octave as proposed by Lowe. */
-    private static final int LOWE_SCALES_PER_OCTAVE = 3;
-    /** Estimation of the blur in the input image as proposed by Lowe. */
-    private static final double LOWE_ORIGINAL_BLUR = 0.5;
-    /** Blur of the first scale-level as proposed by Lowe. */
-    private static final double LOWE_INITIAL_BLUR = 1.6;
-
     /**
-     * Creates a scale space for an image using the parameters and algorithms
-     * proposed in Lowe's paper.
-     * @param image Image to build the scale space for.
-     * @throws NullPointerException if {@code image} is {@code null}.
-     * @throws IllegalArgumentException if the image is smaller than 2x2 pixels.
+     * Creates an instance.
+     * @param octaves Octaves of this scale-space.
+     * @throws NullPointerException if {@code octave} is {@code null}.
+     * @throws IllegalArgumentException if there is not at least one octave.
      */
-    public ScaleSpace(final Image image) {
-        this(image,
-                LOWE_SCALES_PER_OCTAVE,
-                LOWE_ORIGINAL_BLUR,
-                LOWE_INITIAL_BLUR,
-                new LinearUpScalerImpl(),
-                new SubsamplerImpl(),
-                new GaussianFilterImpl());
-    }
-
-    /**
-     * Creates the scale space for an image.
-     * @param image Image to build the scale space for.
-     * @param scalesPerOctave Number of scales per octave. Lowe suggests
-     * to use three.
-     * @param originalBlur Estimation of the blurriness of the input image.
-     * Lowe suggests to use 0.5, the minimum required to avoid aliasing.
-     * @param initialBlur Initial blur to apply. Lowe suggests 1.6.
-     * @param upScaler Algorithm to increase the image size. Lowe suggests
-     * {@link LinearUpScalerImpl}.
-     * @param downScaler Algorithm to decrease the image size. Lowe suggests
-     * {@link SubsamplerImpl}.
-     * @param filter Algorithm to filter out high-frequency components. Lowe
-     * suggests {@link GaussianFilterImpl}.
-     * @throws NullPointerException if {@code image} or one of the algorithms is
-     * {@code null}.
-     * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller
-     * than one, {@code originalBlur} is not stricly positive,
-     * {@code initialBlur} is smaller than {@code 2*originalBlur} or if the
-     * image is smaller than 2x2 pixels.
-     */
-    public ScaleSpace(final Image image, final int scalesPerOctave,
-            final double originalBlur, final double initialBlur,
-            UpScaler upScaler, DownScaler downScaler, LowPassFilter filter) {
+    public ScaleSpace(List<Octave> octaves) {
         throw new UnsupportedOperationException("not implemented");
     }
 
     /**
-     * Gets the largest base-scale-exponent available.
-     * @return Maximual base-scale-exponent.
+     * Gets the octaves of this scale-space.
+     * @return Immutable list of octaves.
      */
-    public int maxBaseScaleExponent() {
+    public List<Octave> getOctaves() {
         throw new UnsupportedOperationException("not implemented");
     }
 
     /**
-     * Get a set of three adjacent difference-of-gaussian images together
+     * Get the sets of three adjacent difference-of-gaussian images together
      * with the scaled images they depend on.
-     * @param baseScaleExponent Base scale-exponent of the scale level.
-     * @return Scale-level.
-     * @throws IndexOutOfBoundsException if {@code baseScaleExponent } is
-     * negative or larger than {@link #maxBaseScaleExponent()}.
+     * @return Immutable list of scale-levels.
      */
-    public ScaleLevel getScaleLevel(final int baseScaleExponent) {
+    public List<ScaleLevel> getScaleLevel() {
         throw new UnsupportedOperationException("not implemented");
     }
 }
