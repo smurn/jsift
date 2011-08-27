@@ -54,13 +54,4 @@ public final class ScaleSpace {
     public List<Octave> getOctaves() {
         throw new UnsupportedOperationException("not implemented");
     }
-
-    /**
-     * Get the sets of three adjacent difference-of-gaussian images together
-     * with the scaled images they depend on.
-     * @return Immutable list of scale-levels.
-     */
-    public List<ScaleLevel> getScaleLevel() {
-        throw new UnsupportedOperationException("not implemented");
-    }
 }
