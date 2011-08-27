@@ -110,6 +110,14 @@ public class ImageTest {
     }
 
     @Test
+    public void copyCtr() {
+        float[][] input = new float[][]{{1, 2, 3}, {4, 5, 6}};
+        Image image = new Image(input);
+        Image copy = new Image(image);
+        assertArrayEquals(input, copy.toArray());
+    }
+
+    @Test
     public void getWidth() {
         Image target = new Image(5, 10);
         assertEquals(10, target.getWidth());

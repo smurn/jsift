@@ -54,6 +54,14 @@ public final class Image {
     }
 
     /**
+     * Copy constructor.
+     * @param image Image to copy.
+     */
+    public Image(final Image image) {
+        this(image.pixels);
+    }
+
+    /**
      * Creates an image from the given pixel values.
      * @param pixels Two dimensional array containing the pixels. The array
      * elements are interpreted as {@code pixels[row][column]}. Use
