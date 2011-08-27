@@ -154,4 +154,12 @@ public final class GaussianFilterImpl implements LowPassFilter {
         }
         return csum;
     }
+
+    @Override
+    public double sigmaDifference(double sigmaFrom, double sigmaTo) {
+        if (sigmaTo < sigmaFrom) {
+            throw new IllegalArgumentException("Cannot reduce blur");
+        }
+        return Math.sqrt(sigmaTo * sigmaTo - sigmaFrom * sigmaFrom);
+    }
 }

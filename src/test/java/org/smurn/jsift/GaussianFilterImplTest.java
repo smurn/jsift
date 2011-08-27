@@ -85,4 +85,24 @@ public class GaussianFilterImplTest {
 
         assertThat(actual, equalTo(input, 1E-10f));
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void sigmaDifferenceReduce() {
+        GaussianFilterImpl target = new GaussianFilterImpl();
+        target.sigmaDifference(4, 3);
+    }
+
+    @Test
+    public void sigmaDifferenceZero() {
+        GaussianFilterImpl target = new GaussianFilterImpl();
+        assertEquals(0.0, target.sigmaDifference(4, 4), 1E-10);
+    }
+
+    @Test
+    public void sigmaDifference() {
+        GaussianFilterImpl target = new GaussianFilterImpl();
+        double actual = target.sigmaDifference(3, 4);
+        double expected = Math.sqrt(4 * 4 - 3 * 3);
+        assertEquals(expected, actual, 1E-10);
+    }
 }
