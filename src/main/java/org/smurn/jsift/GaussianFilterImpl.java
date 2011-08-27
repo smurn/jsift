@@ -50,10 +50,15 @@ public final class GaussianFilterImpl implements LowPassFilter {
         if (image == null) {
             throw new NullPointerException("image must not be null");
         }
-        if (sigma <= 0) {
-            throw new IllegalArgumentException("sigma must not be zero or "
-                    + "negative.");
+        if (sigma < 0) {
+            throw new IllegalArgumentException("sigma must not be negative.");
         }
+        
+        if (sigma == 0.0){
+            // Dirac delta function, output is input
+            return new Image(image);
+        }
+        
         double[] kernel = buildKernel(sigma);
         double[] cumulativeKernel = cumulativeSum(kernel);
         int window = (kernel.length - 1) / 2;

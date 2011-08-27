@@ -31,9 +31,9 @@ public class GaussianFilterImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void zeroGaussian() {
+    public void negativeGaussian() {
         GaussianFilterImpl target = new GaussianFilterImpl();
-        target.filter(new Image(20, 20), 0.0);
+        target.filter(new Image(20, 20), -0.1);
     }
 
     /**

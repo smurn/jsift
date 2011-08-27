@@ -30,8 +30,7 @@ public interface LowPassFilter {
      * on the implementation.
      * @return Filtered image.
      * @throws NullPointerException if {@code image} is {@code null}.
-     * @throws IllegalArgumentException if {@code sigma} is not strictly
-     * positive.
+     * @throws IllegalArgumentException if {@code sigma} is negative.
      */
     Image filter(Image image, double sigma);
 
