@@ -24,7 +24,7 @@ import java.util.List;
  */
 public final class ScaleSpace {
 
-    /** Octaves in this scale-space */
+    /** Octaves in this scale-space. */
     private final List<Octave> octaves;
 
     /**

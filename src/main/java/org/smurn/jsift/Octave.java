@@ -27,11 +27,10 @@ public final class Octave {
 
     private final List<Image> scaleImages;
     private final List<Image> doGs;
+    private static final int ADDITIONAL_SCALES = 2;
 
     /**
      * Creates an instance.
-     * @param baseScale Scale of the scale-image with the lowest scale in this
-     * octave.
      * @param scaleImages Scale-images.
      * @param doGs Difference-of-gaussian images.
      * @throws NullPointerException if one of the parameters is {@code null}.
@@ -49,7 +48,7 @@ public final class Octave {
         if (doGs == null) {
             throw new NullPointerException("scaleImages must not be null");
         }
-        if (scaleImages.size() < 4) {
+        if (scaleImages.size() < ADDITIONAL_SCALES + 2) {
             throw new IllegalArgumentException(
                     "Need at least four scale-images.");
         }
@@ -81,12 +80,12 @@ public final class Octave {
         this.doGs = Collections.unmodifiableList(new ArrayList<Image>(doGs));
     }
 
-
     /**
      * Gets the number of scales per octave. 
+     * @return Number of scales per octave.
      */
     public int getScalesPerOctave() {
-        return scaleImages.size() - 3;
+        return scaleImages.size() - ADDITIONAL_SCALES - 1;
     }
 
     /**
@@ -110,20 +109,20 @@ public final class Octave {
     public List<Image> getDifferenceOfGaussians() {
         return doGs;
     }
-    
+
     /**
      * Gets the width of all images (both scale and DoG) in this octave.
      * @return Width of all images in this octave.
      */
-    public int getWidth(){
+    public int getWidth() {
         return scaleImages.get(0).getWidth();
     }
-    
+
     /**
      * Gets the height of all images (both scale and DoG) in this octave.
      * @return Height of all images in this octave.
      */
-    public int getHeight(){
+    public int getHeight() {
         return scaleImages.get(0).getHeight();
     }
 }

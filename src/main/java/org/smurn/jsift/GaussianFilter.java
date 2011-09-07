@@ -53,12 +53,12 @@ public final class GaussianFilter implements LowPassFilter {
         if (sigma < 0) {
             throw new IllegalArgumentException("sigma must not be negative.");
         }
-        
-        if (sigma == 0.0){
+
+        if (sigma == 0.0) {
             // Dirac delta function, output is input
             return new Image(image);
         }
-        
+
         double[] kernel = buildKernel(sigma);
         double[] cumulativeKernel = cumulativeSum(kernel);
         int window = (kernel.length - 1) / 2;
@@ -161,7 +161,8 @@ public final class GaussianFilter implements LowPassFilter {
     }
 
     @Override
-    public double sigmaDifference(double sigmaFrom, double sigmaTo) {
+    public double sigmaDifference(final double sigmaFrom,
+            final double sigmaTo) {
         if (sigmaTo < sigmaFrom) {
             throw new IllegalArgumentException("Cannot reduce blur");
         }

@@ -26,7 +26,7 @@ public interface OctaveFactory {
      * @param scalesPerOctave Number of scales per octave.
      * @param sigma Sigma of the given image.
      * @param filter Algorithm to filter out high-frequency components.
-     * @return 
+     * @return Octave built from the given image.
      * @throws NullPointerException if {@code image} or one of the algorithms is
      * {@code null}.
      * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller

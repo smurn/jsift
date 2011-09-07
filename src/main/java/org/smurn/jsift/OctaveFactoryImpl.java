@@ -24,13 +24,15 @@ import java.util.List;
  */
 public class OctaveFactoryImpl implements OctaveFactory {
 
+    private static final int ADDITIONAL_SCALES = 2;
+
     /**
      * Creates an octave.
      * @param image Scale-image with the lowest scale of this octave.
      * @param scalesPerOctave Number of scales per octave.
      * @param sigma Sigma of the given image.
      * @param filter Algorithm to filter out high-frequency components.
-     * @return 
+     * @return Octave built from the given image.
      * @throws NullPointerException if {@code image} or one of the algorithms is
      * {@code null}.
      * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller
@@ -55,11 +57,12 @@ public class OctaveFactoryImpl implements OctaveFactory {
                     "Blur needs to be larger than zero");
         }
 
-        List<Image> scaleImages = new ArrayList<Image>(scalesPerOctave + 3);
+        List<Image> scaleImages = new ArrayList<Image>(
+                scalesPerOctave + ADDITIONAL_SCALES + 1);
         scaleImages.add(image);
         Image lastImage = image;
         double lastSigma = sigma;
-        for (int i = 1; i < scalesPerOctave + 3; i++) {
+        for (int i = 1; i < scalesPerOctave + ADDITIONAL_SCALES + 1; i++) {
             double nextSigma = sigma
                     * Math.pow(2.0, (double) i / scalesPerOctave);
             double sigmaDelta = filter.sigmaDifference(lastSigma, nextSigma);
@@ -70,7 +73,7 @@ public class OctaveFactoryImpl implements OctaveFactory {
         }
 
         List<Image> diffOfGaussian = new ArrayList<Image>(scalesPerOctave + 2);
-        for (int i = 0; i < scalesPerOctave + 2; i++) {
+        for (int i = 0; i < scalesPerOctave + ADDITIONAL_SCALES; i++) {
             Image lower = scaleImages.get(i);
             Image higher = scaleImages.get(i + 1);
             Image dog = higher.subtract(lower);
