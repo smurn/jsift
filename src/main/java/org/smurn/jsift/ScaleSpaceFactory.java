@@ -15,9 +15,6 @@
  */
 package org.smurn.jsift;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Factory class for scale-spaces.
  */
@@ -45,7 +42,8 @@ public class ScaleSpaceFactory {
                 LOWE_INITIAL_BLUR,
                 new LinearUpScaler(),
                 new SubsamplerImpl(),
-                new GaussianFilter());
+                new GaussianFilter(),
+                new OctaveFactoryImpl());
     }
 
     /**
@@ -62,17 +60,19 @@ public class ScaleSpaceFactory {
      * {@link SubsamplerImpl}.
      * @param filter Algorithm to filter out high-frequency components. Lowe
      * suggests {@link GaussianFilter}.
+     * @param octaveFactory Factory to create the octaves with 
+     * (typically {@link OctaveFactoryImpl}).
+     * @return Scale space of the given image.
      * @throws NullPointerException if {@code image} or one of the algorithms is
      * {@code null}.
      * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller
-     * than one, {@code originalBlur} is not stricly positive,
-     * {@code initialBlur} is smaller than {@code 2*originalBlur} or if the
-     * image is smaller than 3x3 pixels.
+     * than one, {@code originalBlur} is not stricly positive or
+     * {@code initialBlur} is smaller than {@code 2*originalBlur}.
      */
     public ScaleSpace create(final Image image, final int scalesPerOctave,
             final double originalBlur, final double initialBlur,
             final UpScaler upScaler, final DownScaler downScaler,
-            final LowPassFilter filter) {
+            final LowPassFilter filter, final OctaveFactory octaveFactory) {
 
         if (image == null) {
             throw new NullPointerException("image must not be null");
@@ -86,6 +86,9 @@ public class ScaleSpaceFactory {
         if (filter == null) {
             throw new NullPointerException("filter must not be null");
         }
+        if (octaveFactory == null) {
+            throw new NullPointerException("octaveFactory must not be null");
+        }
         if (scalesPerOctave < 1) {
             throw new IllegalArgumentException("Need at least one scale per octave");
         }
@@ -94,9 +97,6 @@ public class ScaleSpaceFactory {
         }
         if (initialBlur < 2 * originalBlur) {
             throw new IllegalArgumentException("initial blur must be greater or equal to twice the original blur.");
-        }
-        if (image.getWidth() < 3 || image.getHeight() < 3) {
-            throw new IllegalArgumentException("image must be at minimum 3x3 pixels in size");
         }
 
         // upscale the image and apply the blur we need for the initial blur.

@@ -22,6 +22,9 @@ public interface DownScaler {
 
     /**
      * Reduces the size of an image by (approximately) a factor of two.
+     * The exact size of the resulting image is implementation dependent, but it
+     * is garanteed that both width and height of the resulting image is
+     * smaller than of the given image.
      * @param image Image to downScale.
      * @return Image Downscaled image of about half the size.
      * @throws NullPointerException if {@code image} is {@code null}.

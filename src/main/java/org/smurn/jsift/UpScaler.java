@@ -22,6 +22,9 @@ public interface UpScaler {
 
     /**
      * Increases the image size by a factor of two.
+     * The exact size of the resulting image is implementation dependent, but it
+     * is garanteed that both width and height of the resulting image is
+     * larger or equal than of the given image.
      * @param image Image to upScale.
      * @return Image with double the size.
      * @throws NullPointerException if {@code image} is {@code null}.
