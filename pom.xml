@@ -172,5 +172,10 @@
             <version>1.9.0-rc1</version> 
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.0.1</version>
+        </dependency>
     </dependencies>
 </project>

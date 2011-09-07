@@ -15,7 +15,11 @@
  */
 package org.smurn.jsift;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Strategy that detects local extrema in a scale-space.
@@ -26,9 +30,93 @@ import java.util.Collection;
 public class ExtremaDetector implements KeypointDetector {
 
     @Override
-    public Collection<ScaleSpacePoint> detectKeypoints(ScaleSpace scaleSpace) {
+    public Collection<ScaleSpacePoint> detectKeypoints(
+            final ScaleSpace scaleSpace) {
 
-        throw new UnsupportedOperationException();
+        if (scaleSpace == null) {
+            throw new NullPointerException("scale space must not be null");
+        }
 
+        List<ScaleSpacePoint> points = new ArrayList<ScaleSpacePoint>();
+        for (Octave octave : scaleSpace.getOctaves()) {
+
+            int dogCount = octave.getDifferenceOfGaussians().size();
+            for (int i = 1; i < dogCount - 1; i++) {
+                Collection<ScaleSpacePoint> pointsOnThisScale = detectKeypoints(
+                        octave.getDifferenceOfGaussians().get(i - 1),
+                        octave.getDifferenceOfGaussians().get(i),
+                        octave.getDifferenceOfGaussians().get(i + 1));
+                points.addAll(pointsOnThisScale);
+            }
+        }
+
+        return points;
+    }
+
+    /**
+     * Detects extrema on one scale.
+     * @param low   The DoG at one scale lower.
+     * @param center The DoG on which to detect the extrema.
+     * @param high The DoG at one scale higher.
+     * @return The extremas.
+     */
+    private Collection<ScaleSpacePoint> detectKeypoints(
+            Image low, Image center, Image high) {
+
+        List<ScaleSpacePoint> points = new LinkedList<ScaleSpacePoint>();
+        for (int row = 1; row < center.getHeight() - 1; row++) {
+            for (int col = 1; col < center.getWidth() - 1; col++) {
+
+                float value = center.getPixel(row, col);
+
+                // Since all neighbors all need to be on the same 'side' for an
+                // extremum we can just take an arbitrary neighbor to determine
+                // if we might face a minimum or a maximum.                
+                float sign = Math.signum(value - center.getPixel(row, col - 1));
+                if (sign == 0.0f) {
+                    break;
+                }
+                value *= sign;
+                boolean isExtremum = true;
+                isExtremum &= low.getPixel(row - 1, col - 1) * sign < value;
+                isExtremum &= low.getPixel(row - 1, col) * sign < value;
+                isExtremum &= low.getPixel(row - 1, col + 1) * sign < value;
+                isExtremum &= low.getPixel(row, col - 1) * sign < value;
+                isExtremum &= low.getPixel(row, col) * sign < value;
+                isExtremum &= low.getPixel(row, col + 1) * sign < value;
+                isExtremum &= low.getPixel(row + 1, col - 1) * sign < value;
+                isExtremum &= low.getPixel(row + 1, col) * sign < value;
+                isExtremum &= low.getPixel(row + 1, col + 1) * sign < value;
+
+                isExtremum &= center.getPixel(row - 1, col - 1) * sign < value;
+                isExtremum &= center.getPixel(row - 1, col) * sign < value;
+                isExtremum &= center.getPixel(row - 1, col + 1) * sign < value;
+                isExtremum &= center.getPixel(row, col - 1) * sign < value;
+                isExtremum &= center.getPixel(row, col + 1) * sign < value;
+                isExtremum &= center.getPixel(row + 1, col - 1) * sign < value;
+                isExtremum &= center.getPixel(row + 1, col) * sign < value;
+                isExtremum &= center.getPixel(row + 1, col + 1) * sign < value;
+
+                isExtremum &= high.getPixel(row - 1, col - 1) * sign < value;
+                isExtremum &= high.getPixel(row - 1, col) * sign < value;
+                isExtremum &= high.getPixel(row - 1, col + 1) * sign < value;
+                isExtremum &= high.getPixel(row, col - 1) * sign < value;
+                isExtremum &= high.getPixel(row, col) * sign < value;
+                isExtremum &= high.getPixel(row, col + 1) * sign < value;
+                isExtremum &= high.getPixel(row + 1, col - 1) * sign < value;
+                isExtremum &= high.getPixel(row + 1, col) * sign < value;
+                isExtremum &= high.getPixel(row + 1, col + 1) * sign < value;
+
+                if (isExtremum) {
+                    Point2D coords = center.toOriginal(
+                            new Point2D.Double(row, col));
+                    ScaleSpacePoint point = new ScaleSpacePoint(
+                            coords.getX(), coords.getY(), center.getSigma());
+                    points.add(point);
+                }
+            }
+        }
+
+        return points;
     }
 }

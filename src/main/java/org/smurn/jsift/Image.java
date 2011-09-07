@@ -16,6 +16,7 @@
 package org.smurn.jsift;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
@@ -375,6 +376,30 @@ public class Image {
      */
     public double getOffsetY() {
         return offsetY;
+    }
+    
+    /**
+     * Transforms a pixel-centric point of this image
+     * to the correspoding pixel-centric point in the original image.
+     * @param point Point in this image.
+     * @return Point in the original image.
+     */
+    public Point2D.Double toOriginal(Point2D point){
+        return new Point2D.Double(
+                (point.getX() - offsetX) / scale,
+                (point.getY() - offsetY) / scale);
+    }
+    
+    /**
+     * Transforms a pixel-centric point of the original image
+     * to the correspoding pixel-centric point in this image.
+     * @param point Point in the original image.
+     * @return Point in this image.
+     */
+    public Point2D.Double fromOriginal(Point2D point){
+        return new Point2D.Double(
+                point.getX() * scale + offsetX,
+                point.getY() * scale + offsetY);
     }
 
     /**

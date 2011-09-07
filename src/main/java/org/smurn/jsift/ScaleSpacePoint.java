@@ -15,6 +15,9 @@
  */
 package org.smurn.jsift;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 /**
  * Describes a point in the scale-space.
  */
@@ -66,5 +69,33 @@ public final class ScaleSpacePoint {
     @Override
     public String toString() {
         return "(x=" + x + " y=" + y + " s=" + sigma + ")";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        ScaleSpacePoint other = (ScaleSpacePoint) obj;
+        EqualsBuilder builder = new EqualsBuilder();
+        builder.append(x, other.x);
+        builder.append(y, other.y);
+        builder.append(sigma, other.sigma);
+        return builder.build();
+    }
+
+    @Override
+    public int hashCode() {
+        HashCodeBuilder builder = new HashCodeBuilder(65, 15);
+        builder.append(x);
+        builder.append(y);
+        builder.append(sigma);
+        return builder.toHashCode();
     }
 }
