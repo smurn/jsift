@@ -34,7 +34,7 @@ public final class Octave {
      * @param scaleImages Scale-images.
      * @param doGs Difference-of-gaussian images.
      * @throws NullPointerException if one of the parameters is {@code null}.
-     * @throws IllegalArgumentException if there is not at least four scale
+     * @throws IllegalArgumentException if there are not at least four scale
      * images, if the number of Difference-of-gaussian images is not one less
      * than the number of scale-images, if not all images are of equal width and height
      * or if {@code baseScale} is not strictly positive.
@@ -49,7 +49,7 @@ public final class Octave {
         }
         if (scaleImages.size() < 4) {
             throw new IllegalArgumentException(
-                    "Need at least three scale-images.");
+                    "Need at least four scale-images.");
         }
         if (doGs.size() != scaleImages.size() - 1) {
             throw new IllegalArgumentException(
@@ -83,14 +83,16 @@ public final class Octave {
      * Creates an octave.
      * @param image Scale-image with the lowest scale of this octave.
      * @param scalesPerOctave Number of scales per octave.
+     * @param initialBlur Sigma of the given image.
      * @param filter Algorithm to filter out high-frequency components.
      * @return 
      * @throws NullPointerException if {@code image} or one of the algorithms is
      * {@code null}.
      * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller
-     * than one.
+     * than one or if the initial blur is not larger than zero.
      */
-    public static Octave create(final Image image, final int scalesPerOctave, final LowPassFilter filter) {
+    public static Octave create(final Image image, final int scalesPerOctave, 
+            final double initialBlur, final LowPassFilter filter) {
         throw new UnsupportedOperationException();
     }
 

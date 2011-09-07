@@ -25,7 +25,7 @@ import java.awt.image.WritableRaster;
  * A pixel value of 0 is interpreted as black, a value of 1 as white. But
  * the value range is not restricted to those values.
  */
-public final class Image {
+public class Image {
 
     private final float[][] pixels;
     private final int height;
