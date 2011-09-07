@@ -26,26 +26,13 @@ public interface LowPassFilter {
      * for later subsampling (see {@link Subsampler}) without significant loss
      * of information.</p>
      * @param image Image to filter.
-     * @param sigma 'Radius' of the filter. Excact meaning will depend
-     * on the implementation.
-     * @return Filtered image.
+     * @param sigma Sigma of the resulting image. THIS IS NOT the 'Radius' of
+     * the filter. The filter size is calculated such that the resulting
+     * image will have the desired sigma.
+     * @return Filtered image with the given sigma.
      * @throws NullPointerException if {@code image} is {@code null}.
-     * @throws IllegalArgumentException if {@code sigma} is negative.
+     * @throws IllegalArgumentException if {@code sigma} is smaller then the
+     * input image's sigma.
      */
     Image filter(Image image, double sigma);
-
-    /**
-     * Calculates the amount of 'blur' that needs to be applied to reach
-     * a certain total blur.
-     * <p>If we have an image with {@code sigmaFrom} blur and we 
-     * need {@code sigmaTo} blur, this function calculates the right value
-     * that nees to be passed to {@link #filter(org.smurn.jsift.Image, double)}
-     * such that the filtered image will the the desired amount of blur.</p>
-     * @param sigmaFrom Sigma the image already has.
-     * @param sigmaTo Desired sigma.
-     * @return sigma to pass to the filter method.
-     * @throws IllegalArgumentException if {@code sigmaFrom} is larger than
-     * {@code sigmaTo}.
-     */
-    double sigmaDifference(double sigmaFrom, double sigmaTo);
 }

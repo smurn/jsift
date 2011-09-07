@@ -47,6 +47,16 @@ public class LinearUpScalerTest {
     }
 
     @Test
+    public void sigma() {
+        LinearUpScaler target = new LinearUpScaler();
+        Image actual = target.upScale(new Image(10, 10, 3.4, 2, 3, 4));
+        assertEquals(3.4, actual.getSigma(), 1E-6);
+        assertEquals(4.0, actual.getScale(), 1E-6);
+        assertEquals(6.0, actual.getOffsetX(), 1E-6);
+        assertEquals(8.0, actual.getOffsetY(), 1E-6);
+    }
+
+    @Test
     public void interpolate() {
         Image input = new Image(new float[][]{
                     {1.0f, 2.0f, 3.0f},

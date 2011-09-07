@@ -71,4 +71,14 @@ public class SubsamplerTest {
         Image actual = target.downScale(image);
         assertThat(actual, equalTo(expected, 1E-5f));
     }
+
+    @Test
+    public void sigma() {
+        Subsampler target = new Subsampler();
+        Image actual = target.downScale(new Image(10, 10, 3.2, 2, 3, 4));
+        assertEquals(3.2, actual.getSigma(), 1E-6);
+        assertEquals(1.0, actual.getScale(), 1E-6);
+        assertEquals(1.5, actual.getOffsetX(), 1E-6);
+        assertEquals(2.0, actual.getOffsetY(), 1E-6);
+    }
 }

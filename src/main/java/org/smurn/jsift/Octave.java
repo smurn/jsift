@@ -79,7 +79,7 @@ public final class Octave {
                 new ArrayList<Image>(scaleImages));
         this.doGs = Collections.unmodifiableList(new ArrayList<Image>(doGs));
     }
-
+   
     /**
      * Gets the number of scales per octave. 
      * @return Number of scales per octave.

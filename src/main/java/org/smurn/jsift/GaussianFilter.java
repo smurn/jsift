@@ -39,27 +39,38 @@ public final class GaussianFilter implements LowPassFilter {
     /**
      * Creates a filtered copy of the given image.
      * @param image Image to filter.
-     * @param sigma Standard deviation of the gaussian kernel.
+     * @param sigma Sigma of the resulting image. THIS IS NOT the 'Radius' of
+     * the filter. The filter size is calculated such that the resulting
+     * image will have the desired sigma.
      * @return Blurred image.
      * @throws NullPointerException if {@code image} is {@code null}.
-     * @throws IllegalArgumentException if {@code sigma} is not strictly 
-     * positive.
+     * @throws IllegalArgumentException if {@code sigma} is smaller then the
+     * input image's sigma.
      */
     @Override
     public Image filter(final Image image, final double sigma) {
         if (image == null) {
             throw new NullPointerException("image must not be null");
         }
-        if (sigma < 0) {
-            throw new IllegalArgumentException("sigma must not be negative.");
+        if (sigma < image.getSigma()) {
+            throw new IllegalArgumentException("cannot reduce sigma");
         }
 
-        if (sigma == 0.0) {
+        // The sigma parameter and the image's sigma value are relative to the
+        // original image, so we need to transform this into
+        // the coordinate space of this image.
+        final double scale = image.getScale();
+        final double imageSigma = image.getSigma() * scale;
+        final double targetSigma = sigma * scale;
+        double filterSigma = Math.sqrt(targetSigma * targetSigma
+                - imageSigma * imageSigma);
+
+        if (filterSigma == 0.0) {
             // Dirac delta function, output is input
             return new Image(image);
         }
 
-        double[] kernel = buildKernel(sigma);
+        double[] kernel = buildKernel(filterSigma);
         double[] cumulativeKernel = cumulativeSum(kernel);
         int window = (kernel.length - 1) / 2;
 
@@ -158,14 +169,5 @@ public final class GaussianFilter implements LowPassFilter {
             csum[i + 1] = csum[i] + kernel[i];
         }
         return csum;
-    }
-
-    @Override
-    public double sigmaDifference(final double sigmaFrom,
-            final double sigmaTo) {
-        if (sigmaTo < sigmaFrom) {
-            throw new IllegalArgumentException("Cannot reduce blur");
-        }
-        return Math.sqrt(sigmaTo * sigmaTo - sigmaFrom * sigmaFrom);
     }
 }

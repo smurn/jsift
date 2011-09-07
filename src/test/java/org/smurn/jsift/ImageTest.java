@@ -41,10 +41,41 @@ public class ImageTest {
     }
 
     @Test
+    public void ctrSizeSigma() {
+        Image target = new Image(10, 10, 1.8, 2, 3, 4);
+        assertEquals(1.8, target.getSigma(), 1E-6);
+        assertEquals(2.0, target.getScale(), 1E-6);
+        assertEquals(3.0, target.getOffsetX(), 1E-6);
+        assertEquals(4.0, target.getOffsetY(), 1E-6);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ctrSizeSigmaZero() {
+        new Image(10, 10, 0, 2, 3, 4);
+    }
+
+    @Test
     public void ctrFloat() {
         float[][] input = new float[][]{{1, 2, 3}, {4, 5, 6}};
         Image target = new Image(input);
         assertArrayEquals(input, target.toArray());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ctrFloatSigmaZero() {
+        float[][] input = new float[][]{{1, 2, 3}, {4, 5, 6}};
+        new Image(input, 0, 2, 3, 4);
+    }
+
+    @Test
+    public void ctrFloatSigma() {
+        float[][] input = new float[][]{{1, 2, 3}, {4, 5, 6}};
+        Image target = new Image(input, 1.8, 2, 3, 4);
+        assertEquals(1.8, target.getSigma(), 1E-6);
+        assertEquals(1.8, target.getSigma(), 1E-6);
+        assertEquals(2.0, target.getScale(), 1E-6);
+        assertEquals(3.0, target.getOffsetX(), 1E-6);
+        assertEquals(4.0, target.getOffsetY(), 1E-6);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -64,6 +95,23 @@ public class ImageTest {
         Image target = new Image(input, false);
         float[][] expected = new float[][]{{1, 2, 3}, {4, 5, 6}};
         assertArrayEquals(expected, target.toArray());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ctrFloatFalseSigmaZero() {
+        float[][] input = new float[][]{{1, 4}, {2, 5}, {3, 6}};
+        new Image(input, false, 0, 2, 3, 4);
+    }
+
+    @Test
+    public void ctrFloatFalseSigma() {
+        float[][] input = new float[][]{{1, 4}, {2, 5}, {3, 6}};
+        Image target = new Image(input, false, 1.8, 2, 3, 4);
+        assertEquals(1.8, target.getSigma(), 1E-6);
+        assertEquals(1.8, target.getSigma(), 1E-6);
+        assertEquals(2.0, target.getScale(), 1E-6);
+        assertEquals(3.0, target.getOffsetX(), 1E-6);
+        assertEquals(4.0, target.getOffsetY(), 1E-6);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -102,6 +150,32 @@ public class ImageTest {
         Image target = new Image(bImage);
         float[][] expected = new float[][]{{0.0f, 2.0f / 255, 1.0f}};
         assertArrayEquals(expected, target.toArray());
+    }
+
+    @Test
+    public void ctrImageTYPE_BYTE_GRAYSigma() {
+        BufferedImage bImage = new BufferedImage(3, 1, BufferedImage.TYPE_BYTE_GRAY);
+        WritableRaster raster = bImage.getRaster();
+        raster.setDataElements(0, 0, new byte[]{0});
+        raster.setDataElements(1, 0, new byte[]{2});
+        raster.setDataElements(2, 0, new byte[]{(byte) 255});
+
+        Image target = new Image(bImage, 1.8, 2, 3, 4);
+        assertEquals(1.8, target.getSigma(), 1E-6);
+        assertEquals(1.8, target.getSigma(), 1E-6);
+        assertEquals(2.0, target.getScale(), 1E-6);
+        assertEquals(3.0, target.getOffsetX(), 1E-6);
+        assertEquals(4.0, target.getOffsetY(), 1E-6);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void ctrImageTYPE_BYTE_GRAYSigmaZero() {
+        BufferedImage bImage = new BufferedImage(3, 1, BufferedImage.TYPE_BYTE_GRAY);
+        WritableRaster raster = bImage.getRaster();
+        raster.setDataElements(0, 0, new byte[]{0});
+        raster.setDataElements(1, 0, new byte[]{2});
+        raster.setDataElements(2, 0, new byte[]{(byte) 255});
+        new Image(bImage, 0, 2, 3, 4);
     }
 
     @Test(expected = NullPointerException.class)
@@ -214,5 +288,69 @@ public class ImageTest {
         assertArrayEquals(new short[]{(short) (0.4f * 65535)}, (short[]) actual.getRaster().getDataElements(1, 0, null));
         assertArrayEquals(new short[]{(short) (0.5f * 65535)}, (short[]) actual.getRaster().getDataElements(1, 1, null));
         assertArrayEquals(new short[]{(short) (0.6f * 65535)}, (short[]) actual.getRaster().getDataElements(1, 2, null));
+    }
+
+    @Test
+    public void subtract() {
+        Image minuend = new Image(new float[][]{{11, 14}, {12, 15}, {13, 16}});
+        Image subtrahend = new Image(new float[][]{{1, 4}, {2, 5}, {3, 6}});
+        Image expected = new Image(new float[][]{{10, 10}, {10, 10}, {10, 10}});
+
+        Image actual = minuend.subtract(subtrahend);
+        assertArrayEquals(expected.toArray(), actual.toArray());
+    }
+
+    @Test
+    public void subtractPreservesTransformation() {
+        Image minuend = new Image(10, 10, 10, 0.25, 0.2, 0.3);
+        Image subtrahend = new Image(10, 10, 10, 0.25, 0.2, 0.3);
+        Image actual = minuend.subtract(subtrahend);
+        assertEquals(0.25, actual.getScale(), 1E-6);
+        assertEquals(0.2, actual.getOffsetX(), 1E-6);
+        assertEquals(0.3, actual.getOffsetY(), 1E-6);
+    }
+
+    @Test
+    public void subtractSigma() {
+        Image minuend = new Image(10, 10, 10, 1, 0, 0);
+        Image subtrahend = new Image(10, 10, 20, 1, 0, 0);
+        Image difference = minuend.subtract(subtrahend);
+        double actual = difference.getSigma();
+        double expected = Math.exp(0.5 * (Math.log(10) + Math.log(20)));
+        assertEquals(expected, actual, 1E-6);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void subtractNull() {
+        Image minuend = new Image(new float[][]{{11, 14}, {12, 15}, {13, 16}});
+        minuend.subtract(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void subtractWrongDimensions() {
+        Image minuend = new Image(new float[][]{{11, 14}, {12, 15}, {13, 16}});
+        Image subtrahend = new Image(new float[][]{{1, 4}, {2, 5}});
+        minuend.subtract(subtrahend);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void subtractDifferentScale() {
+        Image minuend = new Image(10, 10, 10, 1.0, 0.0, 0.0);
+        Image subtrahend = new Image(10, 10, 20, 1.1, 0.0, 0.0);
+        minuend.subtract(subtrahend);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void subtractDifferentOffsetX() {
+        Image minuend = new Image(10, 10, 10, 1.0, 0.5, 0.0);
+        Image subtrahend = new Image(10, 10, 20, 1.0, 0.0, 0.0);
+        minuend.subtract(subtrahend);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void subtractDifferentOffsetY() {
+        Image minuend = new Image(10, 10, 10, 1.0, 0.0, 0.5);
+        Image subtrahend = new Image(10, 10, 20, 1.0, 0.0, 0.0);
+        minuend.subtract(subtrahend);
     }
 }

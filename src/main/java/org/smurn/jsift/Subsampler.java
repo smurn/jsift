@@ -32,7 +32,7 @@ public class Subsampler implements DownScaler {
      * <p>The even pixels are taken for the resulting image.</p>
      * <p>The size of the resulting image is {@code floor((n+1)/2)}.</p>
      * @param image Image to subsample.
-     * @return Subsampled image.
+     * @return Subsampled image with the same sigma.
      * @throws NullPointerException if {@code image} is {@code null}.
      */
     @Override
@@ -47,7 +47,10 @@ public class Subsampler implements DownScaler {
         int width = (image.getWidth() + 1) / 2;
         int height = (image.getHeight() + 1) / 2;
 
-        Image result = new Image(height, width);
+        Image result = new Image(height, width, image.getSigma(),
+                image.getScale() / 2.0,
+                image.getOffsetX() / 2.0,
+                image.getOffsetY() / 2.0);
 
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {

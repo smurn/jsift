@@ -26,7 +26,7 @@ public interface UpScaler {
      * is garanteed that both width and height of the resulting image is
      * larger or equal than of the given image.
      * @param image Image to upScale.
-     * @return Image with double the size.
+     * @return Image with double the size and the same sigma as the input image.
      * @throws NullPointerException if {@code image} is {@code null}.
      */
     Image upScale(Image image);

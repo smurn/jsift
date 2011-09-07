@@ -26,7 +26,7 @@ public interface DownScaler {
      * is garanteed that both width and height of the resulting image is
      * smaller than of the given image.
      * @param image Image to downScale.
-     * @return Image Downscaled image of about half the size.
+     * @return Image Downscaled image of about half the size and the same sigma.
      * @throws NullPointerException if {@code image} is {@code null}.
      * @throws IllegalArgumentException if the image is not at least one pixel
      * in width and height.

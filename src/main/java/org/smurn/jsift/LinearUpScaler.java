@@ -29,7 +29,7 @@ public final class LinearUpScaler implements UpScaler {
      * <p>The width of the resulting image is {@code 2*width-1} or 0 if the 
      * width is 0. The same formula applies for the height.</p>
      * @param image Image to upScale.
-     * @return Interpolated image with double the size.
+     * @return Image with double the size and the same sigma as the input image.
      * @throws NullPointerException if {@code image} is {@code null}.
      */
     @Override
@@ -42,11 +42,15 @@ public final class LinearUpScaler implements UpScaler {
         int height = image.getHeight() * 2 - 1;
         width = Math.max(width, 0);
         height = Math.max(height, 0);
-        if (width == 0 || height == 0) {
-            return new Image(height, width);
-        }
 
-        Image scaled = new Image(height, width);
+        Image scaled = new Image(height, width, image.getSigma(),
+                2 * image.getScale(),
+                2 * image.getOffsetX(),
+                2 * image.getOffsetY());
+
+        if (width == 0 || height == 0) {
+            return scaled;
+        }
 
         for (int row = 0; row < scaled.getHeight(); row++) {
             for (int col = 0; col < scaled.getWidth(); col++) {

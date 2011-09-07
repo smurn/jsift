@@ -25,10 +25,8 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory {
 
     /** Number of scales per octave as proposed by Lowe. */
     private static final int LOWE_SCALES_PER_OCTAVE = 3;
-    /** Estimation of the blur in the input image as proposed by Lowe. */
-    private static final double LOWE_ORIGINAL_BLUR = 0.5;
     /** Blur of the first scale-level as proposed by Lowe. */
-    private static final double LOWE_INITIAL_BLUR = 1.6;
+    private static final double LOWE_INITIAL_SIGMA = 0.8;
 
     /**
      * Creates a scale space for an image using the parameters and algorithms
@@ -43,8 +41,7 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory {
         return create(
                 image,
                 LOWE_SCALES_PER_OCTAVE,
-                LOWE_ORIGINAL_BLUR,
-                LOWE_INITIAL_BLUR,
+                LOWE_INITIAL_SIGMA,
                 new LinearUpScaler(),
                 new Subsampler(),
                 new GaussianFilter(),
@@ -56,10 +53,10 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory {
      * @param image Image to build the scale space for.
      * @param scalesPerOctave Number of scales per octave. Lowe suggests
      * to use three.
-     * @param originalSigma Estimation of the blurriness of the input image.
-     * Lowe suggests to use 0.5, the minimum required to avoid aliasing.
      * @param initialSigma Sigma of the first scale in the first octave. Lowe
-     * suggests 1.6.
+     * suggests 1.6, but he's referring to an upscaled image. We are
+     * interpreting all sigma values in reference to the original image. 
+     * So the corresponing value to use here is 0.8.
      * @param upScaler Algorithm to increase the image size. Lowe suggests
      * {@link LinearUpScaler}.
      * @param downScaler Algorithm to decrease the image size. Lowe suggests
@@ -75,8 +72,9 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory {
      * than one, {@code originalBlur} is not stricly positive or
      * {@code initialBlur} is smaller than {@code 2*originalBlur}.
      */
+    @Override
     public ScaleSpace create(final Image image, final int scalesPerOctave,
-            final double originalSigma, final double initialSigma,
+            final double initialSigma,
             final UpScaler upScaler, final DownScaler downScaler,
             final LowPassFilter filter, final OctaveFactory octaveFactory) {
 
@@ -99,24 +97,19 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory {
             throw new IllegalArgumentException(
                     "Need at least one scale per octave");
         }
-        if (originalSigma <= 0) {
-            throw new IllegalArgumentException(
-                    "originalBlur needs to be greater than zero");
-        }
-        if (initialSigma < 2 * originalSigma) {
-            throw new IllegalArgumentException("initial blur must be greater or"
-                    + " equal to twice the original blur.");
+        if (initialSigma < image.getSigma()) {
+            throw new IllegalArgumentException("initial sigma must be greater"
+                    + " or equal the original sigma.");
         }
 
         // upscale the image and apply the blur we need for the initial blur.
         Image startImage = upScaler.upScale(image);
-        startImage = filter.filter(startImage,
-                filter.sigmaDifference(2 * originalSigma, initialSigma));
+        startImage = filter.filter(startImage, initialSigma);
 
         List<Octave> octaves = new ArrayList<Octave>();
         while (startImage.getWidth() > 0 && startImage.getHeight() > 0) {
             Octave octave = octaveFactory.create(startImage, scalesPerOctave,
-                    initialSigma, filter);
+                    filter);
             octaves.add(octave);
 
             // get the scale-image which has twice the sigma as the bases for

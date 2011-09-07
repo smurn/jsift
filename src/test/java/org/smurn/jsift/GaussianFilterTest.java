@@ -31,9 +31,9 @@ public class GaussianFilterTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void negativeGaussian() {
+    public void reduceGaussian() {
         GaussianFilter target = new GaussianFilter();
-        target.filter(new Image(20, 20), -0.1);
+        target.filter(new Image(20, 20, 3.0, 2, 3, 4), 2.9);
     }
 
     /**
@@ -61,7 +61,37 @@ public class GaussianFilterTest {
         }
 
         GaussianFilter target = new GaussianFilter();
-        Image actual = target.filter(input, sigma);
+        Image actual = target.filter(input, Math.sqrt(6.5 * 6.5 + 0.5 * 0.5));
+
+        assertThat(actual, equalTo(expected, 1E-5f));
+    }
+
+    /**
+     * This test smooths a point source which produces the image
+     * of the kernel which we calculate with double accuracy as a reference
+     * (using the definition of the gauss kernel).
+     */
+    @Test
+    public void pointSourceScaled() {
+        double sigma = 6.5;
+        double divisor = 2 * sigma * sigma;
+        double scale = 1.0 / (divisor * Math.PI);
+
+        Image input = new Image(101, 101, 0.8, 2.0, 0, 0);
+        input.setPixel(50, 50, 1.0f);
+
+        Image expected = new Image(101, 101);
+        for (int row = 0; row < input.getHeight(); row++) {
+            for (int col = 0; col < input.getWidth(); col++) {
+                double x = col - 50.0;
+                double y = row - 50.0;
+                double value = scale * Math.exp(-(x * x + y * y) / divisor);
+                expected.setPixel(row, col, (float) value);
+            }
+        }
+
+        GaussianFilter target = new GaussianFilter();
+        Image actual = target.filter(input, 3.3470135942359122721782924135676);
 
         assertThat(actual, equalTo(expected, 1E-5f));
     }
@@ -84,25 +114,5 @@ public class GaussianFilterTest {
         Image actual = target.filter(input, 4.5);
 
         assertThat(actual, equalTo(input, 1E-10f));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void sigmaDifferenceReduce() {
-        GaussianFilter target = new GaussianFilter();
-        target.sigmaDifference(4, 3);
-    }
-
-    @Test
-    public void sigmaDifferenceZero() {
-        GaussianFilter target = new GaussianFilter();
-        assertEquals(0.0, target.sigmaDifference(4, 4), 1E-10);
-    }
-
-    @Test
-    public void sigmaDifference() {
-        GaussianFilter target = new GaussianFilter();
-        double actual = target.sigmaDifference(3, 4);
-        double expected = Math.sqrt(4 * 4 - 3 * 3);
-        assertEquals(expected, actual, 1E-10);
     }
 }

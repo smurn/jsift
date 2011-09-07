@@ -25,40 +25,13 @@ import static org.mockito.Mockito.*;
  */
 public class OctaveFactoryImplTest {
 
-    private static class MockImage extends Image {
-
-        private final double sigma;
-
-        public MockImage(final double sigma) {
-            super(10, 10);
-            this.sigma = sigma;
-        }
-
-        public double getSigma() {
-            return sigma;
-        }
-
-        @Override
-        public Image subtract(Image subtrahend) {
-            MockImage mock = (MockImage) subtrahend;
-            return new MockImage(this.sigma + mock.sigma);
-        }
-    }
-
     private static class MockFilter implements LowPassFilter {
 
         @Override
         public Image filter(Image image, double sigma) {
-            MockImage mock = (MockImage) image;
-            return new MockImage((2 * mock.sigma + sigma) / 2);
-        }
-
-        @Override
-        public double sigmaDifference(double sigmaFrom, double sigmaTo) {
-            return 2 * (sigmaTo - sigmaFrom);
+            return new Image(10, 10, sigma, 2, 3, 4);
         }
     }
-    
     private OctaveFactoryImpl target;
 
     @Before
@@ -68,67 +41,72 @@ public class OctaveFactoryImplTest {
 
     @Test(expected = NullPointerException.class)
     public void createImageNull() {
-        target.create(null, 3, 1.7, mock(LowPassFilter.class));
+        target.create(null, 3, mock(LowPassFilter.class));
     }
 
     @Test(expected = NullPointerException.class)
     public void createFilterNull() {
-        target.create(new Image(10, 10), 3, 1.7, null);
+        target.create(new Image(10, 10), 3, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createZeroScales() {
-        target.create(new Image(10, 10), 0, 1.7, mock(LowPassFilter.class));
+        target.create(new Image(10, 10), 0, mock(LowPassFilter.class));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void createZeroBlur() {
-        target.create(new Image(10, 10), 3, 0, mock(LowPassFilter.class));
-    }
 
     @Test
     public void createScaleImages1() {
         LowPassFilter filter = new MockFilter();
-        Octave octave = target.create(new MockImage(1.5), 1, 1.5, filter);
+        Octave octave = target.create(new Image(10, 10, 1.5, 2, 3, 4), 1, filter);
         assertEquals(1, octave.getScalesPerOctave());
-        assertEquals(1.5, ((MockImage) (octave.getScaleImages().get(0))).getSigma(), 1E-6);
-        assertEquals(3.0, ((MockImage) (octave.getScaleImages().get(1))).getSigma(), 1E-6);
-        assertEquals(6.0, ((MockImage) (octave.getScaleImages().get(2))).getSigma(), 1E-6);
-        assertEquals(12.0, ((MockImage) (octave.getScaleImages().get(3))).getSigma(), 1E-6);
+        assertEquals(1.5, (octave.getScaleImages().get(0)).getSigma(), 1E-6);
+        assertEquals(3.0, (octave.getScaleImages().get(1)).getSigma(), 1E-6);
+        assertEquals(6.0, (octave.getScaleImages().get(2)).getSigma(), 1E-6);
+        assertEquals(12.0, (octave.getScaleImages().get(3)).getSigma(), 1E-6);
     }
 
     @Test
     public void createScaleImages3() {
         LowPassFilter filter = new MockFilter();
-        Octave octave = target.create(new MockImage(1.5), 3, 1.5, filter);
+        Octave octave = target.create(new Image(10, 10, 1.5, 2, 3, 4), 3, filter);
         assertEquals(3, octave.getScalesPerOctave());
-        assertEquals(1.5 * Math.pow(2, 0.0 / 3.0), ((MockImage) (octave.getScaleImages().get(0))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 1.0 / 3.0), ((MockImage) (octave.getScaleImages().get(1))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 2.0 / 3.0), ((MockImage) (octave.getScaleImages().get(2))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 3.0 / 3.0), ((MockImage) (octave.getScaleImages().get(3))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 4.0 / 3.0), ((MockImage) (octave.getScaleImages().get(4))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 5.0 / 3.0), ((MockImage) (octave.getScaleImages().get(5))).getSigma(), 1E-6);
+        assertEquals(1.5 * Math.pow(2, 0.0 / 3.0), (octave.getScaleImages().get(0)).getSigma(), 1E-6);
+        assertEquals(1.5 * Math.pow(2, 1.0 / 3.0), (octave.getScaleImages().get(1)).getSigma(), 1E-6);
+        assertEquals(1.5 * Math.pow(2, 2.0 / 3.0), (octave.getScaleImages().get(2)).getSigma(), 1E-6);
+        assertEquals(1.5 * Math.pow(2, 3.0 / 3.0), (octave.getScaleImages().get(3)).getSigma(), 1E-6);
+        assertEquals(1.5 * Math.pow(2, 4.0 / 3.0), (octave.getScaleImages().get(4)).getSigma(), 1E-6);
+        assertEquals(1.5 * Math.pow(2, 5.0 / 3.0), (octave.getScaleImages().get(5)).getSigma(), 1E-6);
     }
 
     @Test
     public void createDoG1() {
         LowPassFilter filter = new MockFilter();
-        Octave octave = target.create(new MockImage(1.5), 1, 1.5, filter);
+        Octave octave = target.create(new Image(10, 10, 1.5, 2, 3, 4), 1, filter);
         assertEquals(1, octave.getScalesPerOctave());
-        assertEquals(1.5 + 3.0, ((MockImage) (octave.getDifferenceOfGaussians().get(0))).getSigma(), 1E-6);
-        assertEquals(3.0 + 6.0, ((MockImage) (octave.getDifferenceOfGaussians().get(1))).getSigma(), 1E-6);
-        assertEquals(6.0 + 12.0, ((MockImage) (octave.getDifferenceOfGaussians().get(2))).getSigma(), 1E-6);
+        assertEquals(logMean(1.5, 3.0), (octave.getDifferenceOfGaussians().get(0)).getSigma(), 1E-6);
+        assertEquals(logMean(3.0, 6.0), (octave.getDifferenceOfGaussians().get(1)).getSigma(), 1E-6);
+        assertEquals(logMean(6.0, 12.0), (octave.getDifferenceOfGaussians().get(2)).getSigma(), 1E-6);
     }
 
     @Test
     public void createDoG3() {
         LowPassFilter filter = new MockFilter();
-        Octave octave = target.create(new MockImage(1.5), 3, 1.5, filter);
+        Octave octave = target.create(new Image(10, 10, 1.5, 2, 3, 4), 3, filter);
         assertEquals(3, octave.getScalesPerOctave());
-        assertEquals(1.5 * Math.pow(2, 0.0 / 3.0) + 1.5 * Math.pow(2, 1.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(0))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 1.0 / 3.0) + 1.5 * Math.pow(2, 2.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(1))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 2.0 / 3.0) + 1.5 * Math.pow(2, 3.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(2))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 3.0 / 3.0) + 1.5 * Math.pow(2, 4.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(3))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 4.0 / 3.0) + 1.5 * Math.pow(2, 5.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(4))).getSigma(), 1E-6);
+        assertEquals(logMean(1.5 * Math.pow(2, 0.0 / 3.0), 1.5 * Math.pow(2, 1.0 / 3.0)),
+                (octave.getDifferenceOfGaussians().get(0)).getSigma(), 1E-6);
+        assertEquals(logMean(1.5 * Math.pow(2, 1.0 / 3.0), 1.5 * Math.pow(2, 2.0 / 3.0)),
+                (octave.getDifferenceOfGaussians().get(1)).getSigma(), 1E-6);
+        assertEquals(logMean(1.5 * Math.pow(2, 2.0 / 3.0), 1.5 * Math.pow(2, 3.0 / 3.0)),
+                (octave.getDifferenceOfGaussians().get(2)).getSigma(), 1E-6);
+        assertEquals(logMean(1.5 * Math.pow(2, 3.0 / 3.0), 1.5 * Math.pow(2, 4.0 / 3.0)),
+                (octave.getDifferenceOfGaussians().get(3)).getSigma(), 1E-6);
+        assertEquals(logMean(1.5 * Math.pow(2, 4.0 / 3.0), 1.5 * Math.pow(2, 5.0 / 3.0)),
+                (octave.getDifferenceOfGaussians().get(4)).getSigma(), 1E-6);
+    }
+
+    private double logMean(double a, double b) {
+        return Math.exp(0.5 * (Math.log(a) + Math.log(b)));
     }
 }
