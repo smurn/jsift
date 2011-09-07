@@ -28,7 +28,7 @@ public class OctaveFactoryImpl implements OctaveFactory {
      * Creates an octave.
      * @param image Scale-image with the lowest scale of this octave.
      * @param scalesPerOctave Number of scales per octave.
-     * @param initialBlur Sigma of the given image.
+     * @param sigma Sigma of the given image.
      * @param filter Algorithm to filter out high-frequency components.
      * @return 
      * @throws NullPointerException if {@code image} or one of the algorithms is
@@ -38,7 +38,7 @@ public class OctaveFactoryImpl implements OctaveFactory {
      */
     @Override
     public Octave create(final Image image, final int scalesPerOctave,
-            final double initialBlur, final LowPassFilter filter) {
+            final double sigma, final LowPassFilter filter) {
 
         if (image == null) {
             throw new NullPointerException("Image must not be null");
@@ -50,7 +50,7 @@ public class OctaveFactoryImpl implements OctaveFactory {
             throw new IllegalArgumentException(
                     "Need at least one scale per octave");
         }
-        if (initialBlur <= 0) {
+        if (sigma <= 0) {
             throw new IllegalArgumentException(
                     "Blur needs to be larger than zero");
         }
@@ -58,13 +58,13 @@ public class OctaveFactoryImpl implements OctaveFactory {
         List<Image> scaleImages = new ArrayList<Image>(scalesPerOctave + 3);
         scaleImages.add(image);
         Image lastImage = image;
-        double lastSigma = initialBlur;
+        double lastSigma = sigma;
         for (int i = 1; i < scalesPerOctave + 3; i++) {
-            double nextSigma = initialBlur
+            double nextSigma = sigma
                     * Math.pow(2.0, (double) i / scalesPerOctave);
-            double sigma = filter.sigmaDifference(lastSigma, nextSigma);
+            double sigmaDelta = filter.sigmaDifference(lastSigma, nextSigma);
 
-            lastImage = filter.filter(lastImage, sigma);
+            lastImage = filter.filter(lastImage, sigmaDelta);
             lastSigma = nextSigma;
             scaleImages.add(lastImage);
         }

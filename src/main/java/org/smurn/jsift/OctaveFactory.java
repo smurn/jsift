@@ -24,7 +24,7 @@ public interface OctaveFactory {
      * Creates an octave.
      * @param image Scale-image with the lowest scale of this octave.
      * @param scalesPerOctave Number of scales per octave.
-     * @param initialBlur Sigma of the given image.
+     * @param sigma Sigma of the given image.
      * @param filter Algorithm to filter out high-frequency components.
      * @return 
      * @throws NullPointerException if {@code image} or one of the algorithms is
@@ -32,6 +32,6 @@ public interface OctaveFactory {
      * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller
      * than one or if the initial blur is not larger than zero.
      */
-    Octave create(Image image, int scalesPerOctave, double initialBlur,
+    Octave create(Image image, int scalesPerOctave, double sigma,
             LowPassFilter filter);
 }

@@ -33,9 +33,10 @@ public interface ScaleSpaceFactory {
      * @param image Image to build the scale space for.
      * @param scalesPerOctave Number of scales per octave. Lowe suggests
      * to use three.
-     * @param originalBlur Estimation of the blurriness of the input image.
+     * @param originalSigma Estimation of the blurriness of the input image.
      * Lowe suggests to use 0.5, the minimum required to avoid aliasing.
-     * @param initialBlur Initial blur to apply. Lowe suggests 1.6.
+     * @param initialSigma Sigma of the first scale in the first octave. Lowe
+     * suggests 1.6.
      * @param upScaler Algorithm to increase the image size. Lowe suggests
      * {@link LinearUpScaler}.
      * @param downScaler Algorithm to decrease the image size. Lowe suggests
@@ -52,7 +53,7 @@ public interface ScaleSpaceFactory {
      * {@code initialBlur} is smaller than {@code 2*originalBlur}.
      */
     ScaleSpace create(Image image, int scalesPerOctave,
-            double originalBlur, double initialBlur,
+            double originalSigma, double initialSigma,
             UpScaler upScaler, DownScaler downScaler,
             LowPassFilter filter, OctaveFactory octaveFactory);
 }

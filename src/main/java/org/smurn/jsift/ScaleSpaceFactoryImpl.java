@@ -55,9 +55,10 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory{
      * @param image Image to build the scale space for.
      * @param scalesPerOctave Number of scales per octave. Lowe suggests
      * to use three.
-     * @param originalBlur Estimation of the blurriness of the input image.
+     * @param originalSigma Estimation of the blurriness of the input image.
      * Lowe suggests to use 0.5, the minimum required to avoid aliasing.
-     * @param initialBlur Initial blur to apply. Lowe suggests 1.6.
+     * @param initialSigma Sigma of the first scale in the first octave. Lowe
+     * suggests 1.6.
      * @param upScaler Algorithm to increase the image size. Lowe suggests
      * {@link LinearUpScaler}.
      * @param downScaler Algorithm to decrease the image size. Lowe suggests
@@ -74,7 +75,7 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory{
      * {@code initialBlur} is smaller than {@code 2*originalBlur}.
      */
     public ScaleSpace create(final Image image, final int scalesPerOctave,
-            final double originalBlur, final double initialBlur,
+            final double originalSigma, final double initialSigma,
             final UpScaler upScaler, final DownScaler downScaler,
             final LowPassFilter filter, final OctaveFactory octaveFactory) {
 
@@ -96,22 +97,22 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory{
         if (scalesPerOctave < 1) {
             throw new IllegalArgumentException("Need at least one scale per octave");
         }
-        if (originalBlur <= 0) {
+        if (originalSigma <= 0) {
             throw new IllegalArgumentException("originalBlur needs to be greater than zero");
         }
-        if (initialBlur < 2 * originalBlur) {
+        if (initialSigma < 2 * originalSigma) {
             throw new IllegalArgumentException("initial blur must be greater or equal to twice the original blur.");
         }
 
         // upscale the image and apply the blur we need for the initial blur.
         Image startImage = upScaler.upScale(image);
         startImage = filter.filter(startImage, 
-                filter.sigmaDifference(2 * originalBlur, initialBlur));
+                filter.sigmaDifference(2 * originalSigma, initialSigma));
 
         List<Octave> octaves = new ArrayList<Octave>();
         while(startImage.getWidth() > 0 && startImage.getHeight() > 0){
             Octave octave = octaveFactory.create(startImage, scalesPerOctave,
-                    initialBlur, filter);
+                    initialSigma, filter);
             octaves.add(octave);
             
             // get the scale-image which has twice the sigma as the bases for
