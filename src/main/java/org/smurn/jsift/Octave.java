@@ -110,4 +110,20 @@ public final class Octave {
     public List<Image> getDifferenceOfGaussians() {
         return doGs;
     }
+    
+    /**
+     * Gets the width of all images (both scale and DoG) in this octave.
+     * @return Width of all images in this octave.
+     */
+    public int getWidth(){
+        return scaleImages.get(0).getWidth();
+    }
+    
+    /**
+     * Gets the height of all images (both scale and DoG) in this octave.
+     * @return Height of all images in this octave.
+     */
+    public int getHeight(){
+        return scaleImages.get(0).getHeight();
+    }
 }

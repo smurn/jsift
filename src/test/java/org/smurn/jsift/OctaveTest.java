@@ -152,4 +152,32 @@ public class OctaveTest {
                 new Image(new float[][]{{7}})));
         target.getDifferenceOfGaussians().clear();
     }
+
+    @Test
+    public void getWidth() {
+        Octave target = new Octave(Arrays.asList(
+                new Image(20, 21),
+                new Image(20, 21),
+                new Image(20, 21),
+                new Image(20, 21)),
+                Arrays.asList(
+                new Image(20, 21),
+                new Image(20, 21),
+                new Image(20, 21)));
+        assertEquals(21, target.getWidth());
+    }
+
+    @Test
+    public void getHeight() {
+        Octave target = new Octave(Arrays.asList(
+                new Image(20, 21),
+                new Image(20, 21),
+                new Image(20, 21),
+                new Image(20, 21)),
+                Arrays.asList(
+                new Image(20, 21),
+                new Image(20, 21),
+                new Image(20, 21)));
+        assertEquals(20, target.getHeight());
+    }
 }
