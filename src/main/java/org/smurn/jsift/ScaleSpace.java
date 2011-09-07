@@ -21,21 +21,6 @@ import java.util.List;
 
 /**
  * Three dimensional extension of an image using scale as the third dimension.
- * <p>The scale is usually given as sigma, the amount of blur in the image. Due
- * to the exponential sampling of the scale this class represents the scale
- * by the scale-exponent {@code se}: {@code sigma = sigma_0*alpha^se} where
- * {@code sigma_0} is the initial blur (see constructor)
- * and {@code alpha=2^(-2*s)} where {@code s} is the number of scales per 
- * octave (see constructor). This defintion ensures that for every multiple of
- * {@code 2s} sigma increases by a factor of 2.</p>
- * <p>Images representing the higher scales (less detail) are stored
- * in smaller image sizes to reduce the memory requirement and processing
- * time.</p>
- * <p>This class stores the blurred images as the various scales as well
- * as the difference-of-gaussians (DoG) that result from them. The
- * algorithm works with three adjacent DoG images simultaniously that all
- * need to have the same width and height. {@link #getScaleLevel(int)}
- * provides such a set of three DoG images.</p>
  */
 public final class ScaleSpace {
 

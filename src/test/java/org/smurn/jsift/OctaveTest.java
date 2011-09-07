@@ -28,17 +28,17 @@ public class OctaveTest {
 
     @Test(expected = NullPointerException.class)
     public void ctrNullScales() {
-        new Octave(0.5, null, new ArrayList<Image>());
+        new Octave(null, new ArrayList<Image>());
     }
 
     @Test(expected = NullPointerException.class)
     public void ctrNullDoG() {
-        new Octave(0.5, new ArrayList<Image>(), null);
+        new Octave(new ArrayList<Image>(), null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void ctrWrongCount() {
-        new Octave(0.5, Arrays.asList(
+        new Octave(Arrays.asList(
                 new Image(20, 20),
                 new Image(20, 20),
                 new Image(20, 20),
@@ -52,7 +52,7 @@ public class OctaveTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void ctrToFew() {
-        new Octave(0.5, Arrays.asList(
+        new Octave(Arrays.asList(
                 new Image(20, 20),
                 new Image(20, 20),
                 new Image(20, 20)),
@@ -63,7 +63,7 @@ public class OctaveTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void ctrWrongSize() {
-        new Octave(0.5, Arrays.asList(
+        new Octave(Arrays.asList(
                 new Image(20, 20),
                 new Image(20, 20),
                 new Image(20, 20),
@@ -74,36 +74,9 @@ public class OctaveTest {
                 new Image(20, 19)));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void ctrZeroBase() {
-        new Octave(0.0, Arrays.asList(
-                new Image(20, 20),
-                new Image(20, 20),
-                new Image(20, 20),
-                new Image(20, 20)),
-                Arrays.asList(
-                new Image(20, 20),
-                new Image(20, 20),
-                new Image(20, 20)));
-    }
-
-    @Test
-    public void getBaseScale() {
-        Octave target = new Octave(0.9, Arrays.asList(
-                new Image(20, 20),
-                new Image(20, 20),
-                new Image(20, 20),
-                new Image(20, 20)),
-                Arrays.asList(
-                new Image(20, 20),
-                new Image(20, 20),
-                new Image(20, 20)));
-        assertEquals(0.9, target.getBaseScale(), 1E-10);
-    }
-
     @Test
     public void getScalesPerOctave() {
-        Octave target = new Octave(0.9, Arrays.asList(
+        Octave target = new Octave(Arrays.asList(
                 new Image(20, 20),
                 new Image(20, 20),
                 new Image(20, 20),
@@ -117,7 +90,7 @@ public class OctaveTest {
 
     @Test
     public void getScaleImages() {
-        Octave target = new Octave(0.9, Arrays.asList(
+        Octave target = new Octave(Arrays.asList(
                 new Image(new float[][]{{1}}),
                 new Image(new float[][]{{2}}),
                 new Image(new float[][]{{3}}),
@@ -136,7 +109,7 @@ public class OctaveTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void scaleImagesImmutable() {
-        Octave target = new Octave(0.9, Arrays.asList(
+        Octave target = new Octave(Arrays.asList(
                 new Image(new float[][]{{1}}),
                 new Image(new float[][]{{2}}),
                 new Image(new float[][]{{3}}),
@@ -150,7 +123,7 @@ public class OctaveTest {
 
     @Test
     public void getDoG() {
-        Octave target = new Octave(0.9, Arrays.asList(
+        Octave target = new Octave(Arrays.asList(
                 new Image(new float[][]{{1}}),
                 new Image(new float[][]{{2}}),
                 new Image(new float[][]{{3}}),
@@ -168,7 +141,7 @@ public class OctaveTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void dogImmutable() {
-        Octave target = new Octave(0.9, Arrays.asList(
+        Octave target = new Octave(Arrays.asList(
                 new Image(new float[][]{{1}}),
                 new Image(new float[][]{{2}}),
                 new Image(new float[][]{{3}}),

@@ -15,9 +15,11 @@
  */
 package org.smurn.jsift;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
- * @author Stefan C. Mueller
+ * Factory class for scale-spaces.
  */
 public class ScaleSpaceFactory {
 
@@ -41,9 +43,9 @@ public class ScaleSpaceFactory {
                 LOWE_SCALES_PER_OCTAVE,
                 LOWE_ORIGINAL_BLUR,
                 LOWE_INITIAL_BLUR,
-                new LinearUpScalerImpl(),
+                new LinearUpScaler(),
                 new SubsamplerImpl(),
-                new GaussianFilterImpl());
+                new GaussianFilter());
     }
 
     /**
@@ -55,21 +57,83 @@ public class ScaleSpaceFactory {
      * Lowe suggests to use 0.5, the minimum required to avoid aliasing.
      * @param initialBlur Initial blur to apply. Lowe suggests 1.6.
      * @param upScaler Algorithm to increase the image size. Lowe suggests
-     * {@link LinearUpScalerImpl}.
+     * {@link LinearUpScaler}.
      * @param downScaler Algorithm to decrease the image size. Lowe suggests
      * {@link SubsamplerImpl}.
      * @param filter Algorithm to filter out high-frequency components. Lowe
-     * suggests {@link GaussianFilterImpl}.
+     * suggests {@link GaussianFilter}.
      * @throws NullPointerException if {@code image} or one of the algorithms is
      * {@code null}.
      * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller
      * than one, {@code originalBlur} is not stricly positive,
      * {@code initialBlur} is smaller than {@code 2*originalBlur} or if the
-     * image is smaller than 2x2 pixels.
+     * image is smaller than 3x3 pixels.
      */
     public ScaleSpace create(final Image image, final int scalesPerOctave,
             final double originalBlur, final double initialBlur,
-            UpScaler upScaler, DownScaler downScaler, LowPassFilter filter) {
-        throw new UnsupportedOperationException("not implemented");
+            final UpScaler upScaler, final DownScaler downScaler,
+            final LowPassFilter filter) {
+
+        if (image == null) {
+            throw new NullPointerException("image must not be null");
+        }
+        if (upScaler == null) {
+            throw new NullPointerException("upScaler must not be null");
+        }
+        if (downScaler == null) {
+            throw new NullPointerException("downScaler must not be null");
+        }
+        if (filter == null) {
+            throw new NullPointerException("filter must not be null");
+        }
+        if (scalesPerOctave < 1) {
+            throw new IllegalArgumentException("Need at least one scale per octave");
+        }
+        if (originalBlur <= 0) {
+            throw new IllegalArgumentException("originalBlur needs to be greater than zero");
+        }
+        if (initialBlur < 2 * originalBlur) {
+            throw new IllegalArgumentException("initial blur must be greater or equal to twice the original blur.");
+        }
+        if (image.getWidth() < 3 || image.getHeight() < 3) {
+            throw new IllegalArgumentException("image must be at minimum 3x3 pixels in size");
+        }
+
+        // upscale the image and apply the blur we need for the initial blur.
+        Image startImage = upScaler.upScale(image);
+        startImage = filter.filter(startImage, filter.sigmaDifference(2 * originalBlur, initialBlur));
+
+        while (startImage.getWidth() >= 3 && startImage.getHeight() >= 3) {
+            // build octave
+        }
     }
+
+    private Image buildOctave(Image startImage, int scalesPerOctave, LowPassFilter filter) {
+
+        Image image = startImage;
+        List<Image> scaleImages = new ArrayList<Image>(scalesPerOctave + 3);
+        scaleImages.add(image);
+        double sigma = Math.pow(2, 1.0 / scalesPerOctave);
+
+        for (int i = 0; i < scalesPerOctave; i++) {
+            image = filter.filter(image, sigma);
+            scaleImages.add(image);
+        }
+
+        Image startOfNextOctave = image;
+
+        for (int i = 0; i < 2; i++) {
+            image = filter.filter(image, sigma);
+            scaleImages.add(image);
+        }
+
+        List<Image> dogImages = new ArrayList<Image>(scalesPerOctave + 2);
+        for (int i = 0; i < scaleImages.size() - 1; i++) {
+            Image dog = scaleImages.get(i + 1).subtract(scaleImages.get(i));
+            dogImages.add(dog);
+        }
+
+        return startOfNextOctave;
+    }
+
 }

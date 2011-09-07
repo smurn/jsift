@@ -25,7 +25,6 @@ import java.util.List;
  */
 public final class Octave {
 
-    private final double baseScale;
     private final List<Image> scaleImages;
     private final List<Image> doGs;
 
@@ -40,17 +39,13 @@ public final class Octave {
      * than the number of scale-images, if not all images are of equal width and height
      * or if {@code baseScale} is not strictly positive.
      */
-    public Octave(final double baseScale, final List<Image> scaleImages,
+    public Octave(final List<Image> scaleImages,
             final List<Image> doGs) {
         if (scaleImages == null) {
             throw new NullPointerException("scaleImages must not be null");
         }
         if (doGs == null) {
             throw new NullPointerException("scaleImages must not be null");
-        }
-        if (baseScale <= 0.0) {
-            throw new IllegalArgumentException(
-                    "baseScale must be greater than 0");
         }
         if (scaleImages.size() < 4) {
             throw new IllegalArgumentException(
@@ -62,35 +57,26 @@ public final class Octave {
         }
         int width = scaleImages.get(0).getWidth();
         int height = scaleImages.get(0).getHeight();
-        
-        for(int i =0; i < scaleImages.size();i++){
+
+        for (int i = 0; i < scaleImages.size(); i++) {
             Image image = scaleImages.get(i);
-            if (image.getWidth() != width || image.getHeight() != height){
-                throw new IllegalArgumentException("scale-image " + i + 
-                        " has a different size than the first scale-image");
+            if (image.getWidth() != width || image.getHeight() != height) {
+                throw new IllegalArgumentException("scale-image " + i
+                        + " has a different size than the first scale-image");
             }
         }
-        
-        for(int i =0; i < doGs.size();i++){
+
+        for (int i = 0; i < doGs.size(); i++) {
             Image image = doGs.get(i);
-            if (image.getWidth() != width || image.getHeight() != height){
-                throw new IllegalArgumentException("DoG image " + i + 
-                        " has a different size than the first scale-image");
+            if (image.getWidth() != width || image.getHeight() != height) {
+                throw new IllegalArgumentException("DoG image " + i
+                        + " has a different size than the first scale-image");
             }
         }
-        
-        this.baseScale = baseScale;
+
         this.scaleImages = Collections.unmodifiableList(
                 new ArrayList<Image>(scaleImages));
         this.doGs = Collections.unmodifiableList(new ArrayList<Image>(doGs));
-    }
-
-    /**
-     * Scale of the scale-image with the lowest scale in this octave.
-     * @return Base scale of this octave.
-     */
-    public double getBaseScale() {
-        return baseScale;
     }
 
     /**

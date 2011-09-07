@@ -29,7 +29,7 @@ public class ScaleSpaceTest {
     private Octave dummy2;
 
     public void setup() {
-        dummy1 = new Octave(0.9, Arrays.asList(
+        dummy1 = new Octave(Arrays.asList(
                 new Image(new float[][]{{1}}),
                 new Image(new float[][]{{2}}),
                 new Image(new float[][]{{3}}),
@@ -38,7 +38,7 @@ public class ScaleSpaceTest {
                 new Image(new float[][]{{5}}),
                 new Image(new float[][]{{6}}),
                 new Image(new float[][]{{7}})));
-        dummy2 = new Octave(0.9, Arrays.asList(
+        dummy2 = new Octave(Arrays.asList(
                 new Image(new float[][]{{10}}),
                 new Image(new float[][]{{20}}),
                 new Image(new float[][]{{30}}),

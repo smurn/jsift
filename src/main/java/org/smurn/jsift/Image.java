@@ -217,6 +217,36 @@ public final class Image {
     }
 
     /**
+     * Pixel-wise subtraction.
+     * @param subtrahend Image to subtract from this image.
+     * @return Difference of the two images.
+     * @throws NullPointerException if {@code subtrahend} is {@code null}.
+     * @throws IllegalArgumentException if the image has a different dimension
+     * than this image.
+     */
+    public Image subtract(final Image subtrahend) {
+        if (subtrahend == null) {
+            throw new NullPointerException("subtrahend must not be null");
+        }
+
+        if (subtrahend.getWidth() != width
+                || subtrahend.getHeight() != height) {
+            throw new IllegalArgumentException(
+                    "images have different dimensions.");
+        }
+
+        Image difference = new Image(height, width);
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                float d = getPixel(row, col)
+                        - subtrahend.getPixel(row, col);
+                difference.setPixel(row, col, d);
+            }
+        }
+        return difference;
+    }
+
+    /**
      * Copies this image into a float array.
      * @return Two dimensional array in {@code {@code toArray()[row][column]}}
      * order. Use {@link #toArray(boolean)} for {@code toArray()[column][row]}
