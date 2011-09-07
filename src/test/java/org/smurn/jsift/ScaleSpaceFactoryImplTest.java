@@ -25,11 +25,11 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link ScaleSpaceFactory}.
+ * Unit tests for {@link ScaleSpaceFactoryImpl}.
  */
-public class ScaleSpaceFactoryTest {
+public class ScaleSpaceFactoryImplTest {
 
-    ScaleSpaceFactory target;
+    ScaleSpaceFactoryImpl target;
     DownScaler downScaler;
     UpScaler upScaler;
     LowPassFilter filter;
@@ -46,7 +46,7 @@ public class ScaleSpaceFactoryTest {
 
     @Before
     public void setUp() {
-        target = new ScaleSpaceFactory();
+        target = new ScaleSpaceFactoryImpl();
 
         imageSigma = new HashMap<Image, Double>();
 
