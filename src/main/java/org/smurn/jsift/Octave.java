@@ -80,6 +80,21 @@ public final class Octave {
     }
 
     /**
+     * Creates an octave.
+     * @param image Scale-image with the lowest scale of this octave.
+     * @param scalesPerOctave Number of scales per octave.
+     * @param filter Algorithm to filter out high-frequency components.
+     * @return 
+     * @throws NullPointerException if {@code image} or one of the algorithms is
+     * {@code null}.
+     * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller
+     * than one.
+     */
+    public static Octave create(final Image image, final int scalesPerOctave, final LowPassFilter filter) {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
      * Gets the number of scales per octave. 
      */
     public int getScalesPerOctave() {
