@@ -103,37 +103,8 @@ public class ScaleSpaceFactory {
         Image startImage = upScaler.upScale(image);
         startImage = filter.filter(startImage, filter.sigmaDifference(2 * originalBlur, initialBlur));
 
-        while (startImage.getWidth() >= 3 && startImage.getHeight() >= 3) {
-            // build octave
-        }
+        throw new UnsupportedOperationException();
     }
 
-    private Image buildOctave(Image startImage, int scalesPerOctave, LowPassFilter filter) {
-
-        Image image = startImage;
-        List<Image> scaleImages = new ArrayList<Image>(scalesPerOctave + 3);
-        scaleImages.add(image);
-        double sigma = Math.pow(2, 1.0 / scalesPerOctave);
-
-        for (int i = 0; i < scalesPerOctave; i++) {
-            image = filter.filter(image, sigma);
-            scaleImages.add(image);
-        }
-
-        Image startOfNextOctave = image;
-
-        for (int i = 0; i < 2; i++) {
-            image = filter.filter(image, sigma);
-            scaleImages.add(image);
-        }
-
-        List<Image> dogImages = new ArrayList<Image>(scalesPerOctave + 2);
-        for (int i = 0; i < scaleImages.size() - 1; i++) {
-            Image dog = scaleImages.get(i + 1).subtract(scaleImages.get(i));
-            dogImages.add(dog);
-        }
-
-        return startOfNextOctave;
-    }
 
 }
