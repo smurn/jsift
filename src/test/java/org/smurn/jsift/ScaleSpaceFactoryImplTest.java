@@ -123,6 +123,12 @@ public class ScaleSpaceFactoryImplTest {
         target.create(new Image(10, 10), 3, 0.5, 1.7,
                 mock(UpScaler.class), mock(DownScaler.class), null, mock(OctaveFactory.class));
     }
+    
+    @Test(expected = NullPointerException.class)
+    public void octaveFactoryNull() {
+        target.create(new Image(10, 10), 3, 0.5, 1.7,
+                mock(UpScaler.class), mock(DownScaler.class), mock(LowPassFilter.class), null);
+    }
 
     @Test(expected = IllegalArgumentException.class)
     public void scalesPerOctaveZero() {
