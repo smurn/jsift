@@ -15,6 +15,9 @@
  */
 package org.smurn.jsift;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Factory class for scale-spaces.
  */
@@ -101,9 +104,22 @@ public class ScaleSpaceFactory {
 
         // upscale the image and apply the blur we need for the initial blur.
         Image startImage = upScaler.upScale(image);
-        startImage = filter.filter(startImage, filter.sigmaDifference(2 * originalBlur, initialBlur));
+        startImage = filter.filter(startImage, 
+                filter.sigmaDifference(2 * originalBlur, initialBlur));
 
-        throw new UnsupportedOperationException();
+        List<Octave> octaves = new ArrayList<Octave>();
+        while(startImage.getWidth() > 0 && startImage.getHeight() > 0){
+            Octave octave = octaveFactory.create(startImage, scalesPerOctave,
+                    initialBlur, filter);
+            octaves.add(octave);
+            
+            // get the scale-image which has twice the sigma as the bases for
+            // the next octave.
+            Image twiceBlurred = octave.getScaleImages().get(scalesPerOctave);
+            startImage = downScaler.downScale(twiceBlurred);
+        }
+        
+        return new ScaleSpace(octaves);
     }
 
 

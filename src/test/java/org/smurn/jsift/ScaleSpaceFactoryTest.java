@@ -40,7 +40,7 @@ public class ScaleSpaceFactoryTest {
         if (imageSigma.containsKey(image)) {
             return imageSigma.get(image);
         } else {
-            return 1.0;
+            return 0.5;
         }
     }
 
