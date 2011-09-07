@@ -30,13 +30,15 @@ public final class Octave {
 
     /**
      * Creates an instance.
-     * @param baseScale Scale of the scale-image with the lowest scale in this octave.
+     * @param baseScale Scale of the scale-image with the lowest scale in this
+     * octave.
      * @param scaleImages Scale-images.
      * @param doGs Difference-of-gaussian images.
      * @throws NullPointerException if one of the parameters is {@code null}.
      * @throws IllegalArgumentException if there are not at least four scale
      * images, if the number of Difference-of-gaussian images is not one less
-     * than the number of scale-images, if not all images are of equal width and height
+     * than the number of scale-images, if not all images are of equal width and
+     * height.
      * or if {@code baseScale} is not strictly positive.
      */
     public Octave(final List<Image> scaleImages,
@@ -91,9 +93,47 @@ public final class Octave {
      * @throws IllegalArgumentException if {@code scalesPerOctave} is smaller
      * than one or if the initial blur is not larger than zero.
      */
-    public static Octave create(final Image image, final int scalesPerOctave, 
+    public static Octave create(final Image image, final int scalesPerOctave,
             final double initialBlur, final LowPassFilter filter) {
-        throw new UnsupportedOperationException();
+
+        if (image == null) {
+            throw new NullPointerException("Image must not be null");
+        }
+        if (filter == null) {
+            throw new NullPointerException("Filter must not be null");
+        }
+        if (scalesPerOctave < 1) {
+            throw new IllegalArgumentException(
+                    "Need at least one scale per octave");
+        }
+        if (initialBlur <= 0) {
+            throw new IllegalArgumentException(
+                    "Blur needs to be larger than zero");
+        }
+
+        List<Image> scaleImages = new ArrayList<Image>(scalesPerOctave + 3);
+        scaleImages.add(image);
+        Image lastImage = image;
+        double lastSigma = initialBlur;
+        for (int i = 1; i < scalesPerOctave + 3; i++) {
+            double nextSigma = initialBlur
+                    * Math.pow(2.0, (double) i / scalesPerOctave);
+            double sigma = filter.sigmaDifference(lastSigma, nextSigma);
+
+            lastImage = filter.filter(lastImage, sigma);
+            lastSigma = nextSigma;
+            scaleImages.add(lastImage);
+        }
+
+        List<Image> diffOfGaussian = new ArrayList<Image>(scalesPerOctave + 2);
+        for (int i = 0; i < scalesPerOctave + 2; i++) {
+            Image lower = scaleImages.get(i);
+            Image higher = scaleImages.get(i + 1);
+            Image dog = higher.subtract(lower);
+            diffOfGaussian.add(dog);
+        }
+
+        return new Octave(scaleImages, diffOfGaussian);
     }
 
     /**

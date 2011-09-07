@@ -43,7 +43,7 @@ public class OctaveTest {
         @Override
         public Image subtract(Image subtrahend) {
             MockImage mock = (MockImage) subtrahend;
-            return new MockImage(3 * this.sigma + 2 * mock.sigma);
+            return new MockImage(this.sigma + mock.sigma);
         }
     }
 
@@ -149,8 +149,8 @@ public class OctaveTest {
         assertEquals(1.5 * Math.pow(2, 1.0 / 3.0), ((MockImage) (octave.getScaleImages().get(1))).getSigma(), 1E-6);
         assertEquals(1.5 * Math.pow(2, 2.0 / 3.0), ((MockImage) (octave.getScaleImages().get(2))).getSigma(), 1E-6);
         assertEquals(1.5 * Math.pow(2, 3.0 / 3.0), ((MockImage) (octave.getScaleImages().get(3))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 4.0 / 3.0), ((MockImage) (octave.getScaleImages().get(3))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 5.0 / 3.0), ((MockImage) (octave.getScaleImages().get(4))).getSigma(), 1E-6);
+        assertEquals(1.5 * Math.pow(2, 4.0 / 3.0), ((MockImage) (octave.getScaleImages().get(4))).getSigma(), 1E-6);
+        assertEquals(1.5 * Math.pow(2, 5.0 / 3.0), ((MockImage) (octave.getScaleImages().get(5))).getSigma(), 1E-6);
     }
 
     @Test
@@ -172,7 +172,7 @@ public class OctaveTest {
         assertEquals(1.5 * Math.pow(2, 1.0 / 3.0) + 1.5 * Math.pow(2, 2.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(1))).getSigma(), 1E-6);
         assertEquals(1.5 * Math.pow(2, 2.0 / 3.0) + 1.5 * Math.pow(2, 3.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(2))).getSigma(), 1E-6);
         assertEquals(1.5 * Math.pow(2, 3.0 / 3.0) + 1.5 * Math.pow(2, 4.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(3))).getSigma(), 1E-6);
-        assertEquals(1.5 * Math.pow(2, 4.0 / 3.0) + 1.5 * Math.pow(2, 5.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(3))).getSigma(), 1E-6);
+        assertEquals(1.5 * Math.pow(2, 4.0 / 3.0) + 1.5 * Math.pow(2, 5.0 / 3.0), ((MockImage) (octave.getDifferenceOfGaussians().get(4))).getSigma(), 1E-6);
     }
 
     @Test
