@@ -28,6 +28,8 @@ public interface DownScaler {
      * @param image Image to downScale.
      * @return Image Downscaled image of about half the size.
      * @throws NullPointerException if {@code image} is {@code null}.
+     * @throws IllegalArgumentException if the image is not at least one pixel
+     * in width and height.
      */
     Image downScale(Image image);
 }

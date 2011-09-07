@@ -30,12 +30,11 @@ public class SubsamplerImplTest {
         target.downScale(null);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void image0x0() {
         Image image = new Image(0, 0);
         SubsamplerImpl target = new SubsamplerImpl();
-        Image actual = target.downScale(image);
-        assertThat(actual, equalTo(image, 1E-5f));
+        target.downScale(image);
     }
 
     @Test

@@ -39,6 +39,10 @@ public class SubsamplerImpl implements DownScaler {
         if (image == null) {
             throw new NullPointerException("image must not be null");
         }
+        if (image.getWidth() < 1 || image.getHeight() < 1) {
+            throw new IllegalArgumentException("image must be at least"
+                    + "one pixel in width and height.");
+        }
         int width = (image.getWidth() + 1) / 2;
         int height = (image.getHeight() + 1) / 2;
 
