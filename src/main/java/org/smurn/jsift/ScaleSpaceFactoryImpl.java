@@ -45,7 +45,7 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory{
                 LOWE_ORIGINAL_BLUR,
                 LOWE_INITIAL_BLUR,
                 new LinearUpScaler(),
-                new SubsamplerImpl(),
+                new Subsampler(),
                 new GaussianFilter(),
                 new OctaveFactoryImpl());
     }
@@ -61,7 +61,7 @@ public class ScaleSpaceFactoryImpl implements ScaleSpaceFactory{
      * @param upScaler Algorithm to increase the image size. Lowe suggests
      * {@link LinearUpScaler}.
      * @param downScaler Algorithm to decrease the image size. Lowe suggests
-     * {@link SubsamplerImpl}.
+     * {@link Subsampler}.
      * @param filter Algorithm to filter out high-frequency components. Lowe
      * suggests {@link GaussianFilter}.
      * @param octaveFactory Factory to create the octaves with 
