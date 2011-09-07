@@ -500,6 +500,7 @@ public class Image {
 
     @Override
     public String toString() {
-        return "Image(" + height + "," + width + ")";
+        return "Image(w=" + height + " h=" + width + " s=" + sigma + " scale="
+                + scale + " oX=" + offsetX + " oY=" + offsetY + ")";
     }
 }
